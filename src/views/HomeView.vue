@@ -23,11 +23,14 @@ export default {
 <style>
 .home-container {
   background: linear-gradient(white, #D3D0D0,#A1A1A1);
-  min-height: 100vh;
+  height: 100vh;
   margin: 0px;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
 }
 
 .homepage-section {
   height: 100vh;
+  overflow: hidden;
 }
 </style>
