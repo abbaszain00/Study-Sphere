@@ -31,13 +31,14 @@ export default {
   background-color: white;
   color: white;
   top: 50px;
+  /* border-bottom: 1px solid #000; */
 }
 
 .navbar-logo img {
   height: 350px;
   width: auto;
   padding-top: 20px;
-  padding-left: 200px;
+  padding-left: 100px;
 }
 
 .nav-items {
