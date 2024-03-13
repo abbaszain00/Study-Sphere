@@ -1,23 +1,15 @@
 <template>
   <div id="app">
-    <HomeView />
-    <!-- <Navbar /> -->
+    <router-view/>
   </div>
 </template>
 
 <script>
-import HomeView from './views/HomeView.vue';
-// import Navbar from './components/Navbar.vue';
-
 export default {
-  name: 'App',
-  components: {
-    HomeView,
-    // Navbar,
-  },
+  name: 'App'
 };
 </script>
 
 <style scoped>
-
+/* Your styles here */
 </style>

@@ -7,7 +7,7 @@
     <div class ="homepage-section">
       <h2>All your study needs in one place</h2>
       <div class= "homepage-button">
-        <router-link to="/signin" class="get-started">Get Started</router-link>
+        <router-link to="/signup" class="get-started">Get Started</router-link>
       </div>
     </div>
   </div>
