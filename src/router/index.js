@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import SignUp from '../views/SignUp.vue';
 import ContactView from '@/views/ContactView.vue';
 import FaqView from '@/views/FaqView.vue';
+import SignIn from '@/views/SignIn.vue';
 
 const routes = [
   {
@@ -28,7 +29,7 @@ const routes = [
   {
     path: '/signin',
     name: 'Signin',
-    component: ContactView,
+    component: SignIn,
   },
   
 ];
