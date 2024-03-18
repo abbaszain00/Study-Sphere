@@ -72,11 +72,11 @@
    justify-content: center;
    text-align: center;
    font-size: 28px;
-   margin-top: 100px;
+   margin-top: 50px;
  }
  .signin-box {
   background-color: #FFFFFF;
-  height: 800px;
+  height: 700px;
   margin: auto;
   width: 600px;
   padding: 10px;
