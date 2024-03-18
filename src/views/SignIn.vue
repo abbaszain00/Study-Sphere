@@ -1,10 +1,10 @@
 <template>
-  <div class="signup-container">
+  <div class="signin-container">
     <div id="navbar">
       <Navbar />
     </div>
-    <div class="signup-section">
-      <div class="signup-box">
+    <div class="signin-section">
+      <div class="signin-box">
         <h2>Login</h2>
         <div class="login-details">
           <form @submit.prevent="handleLogin"> <!-- Added method for form submission -->
@@ -33,7 +33,7 @@
  <script>
  import Navbar from '@/components/Navbar.vue';
  export default {
-   name: 'SignUp',
+   name: 'SignIn',
    components: {
      Navbar,
    },
@@ -43,11 +43,20 @@
       password:'',
     };
    },
+   methods: {
+    async handleLogin() {
+      if(this.username === 'user' && this.password === 'pass') {
+        alert ('Login successful');
+      } else {
+        alert('Login failed');
+      }
+    }
+   }
  }
  </script>
  
  <style>
- .signup-container {
+ .signin-container {
    background: linear-gradient(white, #D3D0D0,#A1A1A1);
    height: 100vh;
    margin: 0px;
@@ -56,7 +65,7 @@
    
  }
  
- .signup-section {
+ .signin-section {
    height: 100vh;
    overflow: hidden;
    align-items: center;
@@ -65,7 +74,7 @@
    font-size: 28px;
    margin-top: 100px;
  }
- .signup-box {
+ .signin-box {
   background-color: #FFFFFF;
   height: 800px;
   margin: auto;
