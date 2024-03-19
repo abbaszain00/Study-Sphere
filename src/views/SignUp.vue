@@ -32,10 +32,48 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
+
 export default {
   name: 'SignUp',
   components: {
     Navbar,
+  },
+  data() {
+    return {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+    };
+  },
+  methods: {
+    async createAccount() {
+      try {
+        const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: this.firstName,
+            lastName: this.lastName,
+            email: this.email,
+            password: this.password,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Signup failed');
+        }
+        
+        const data = await response.json();
+        alert(data.msg); // Show success message or redirect
+        // Redirect to login page or dashboard as appropriate
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred, please try again.');
+      }
+    }
   }
 }
 </script>
