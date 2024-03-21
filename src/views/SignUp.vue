@@ -32,6 +32,7 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
+import SignIn from './SignIn.vue';
 
 export default {
   name: 'SignUp',
@@ -69,7 +70,7 @@ export default {
     }
 
     alert(data.message); // Show success message or redirect
-    // Redirect to login page or dashboard as appropriate
+    this.$router.push({ name: 'Signin' });// Redirect to login page or dashboard as appropriate
   } catch (error) {
     console.error('Error:', error);
     alert(error.message); // Display the actual error message from the server or the default 'Signup failed'

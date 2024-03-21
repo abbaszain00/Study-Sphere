@@ -37,21 +37,6 @@
    components: {
      Navbar,
    },
-   data() {
-    return {
-      username:'',
-      password:'',
-    };
-   },
-   methods: {
-    async handleLogin() {
-      if(this.username === 'user' && this.password === 'pass') {
-        alert ('Login successful');
-      } else {
-        alert('Login failed');
-      }
-    }
-   }
  }
  </script>
  
