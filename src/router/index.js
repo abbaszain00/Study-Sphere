@@ -4,6 +4,7 @@ import SignUp from '../views/SignUp.vue';
 import ContactView from '@/views/ContactView.vue';
 import FaqView from '@/views/FaqView.vue';
 import SignIn from '@/views/SignIn.vue';
+import Dashboard from '@/views/Dashboard.vue';
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/signin',
     name: 'Signin',
     component: SignIn,
+  },
+  {
+    path: '/dashboard',
+    name: 'dash',
+    component: Dashboard,
   },
   
 ];
