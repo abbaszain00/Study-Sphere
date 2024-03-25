@@ -12,6 +12,7 @@ app.use(cors());
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
+const jwt = require('jsonwebtoken');
 
 //Sign Up Route
 app.post('/api/signup', async (req, res) => {
@@ -35,6 +36,7 @@ app.post('/api/signup', async (req, res) => {
     await users.insertOne(newUser);
 
     res.status(201).json({ message: 'User created successfully' });
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -51,7 +53,6 @@ app.post('/api/login', async (req, res) => {
     const users = database.collection('users');
 
     const { email, password } = req.body;
-
     const user = await users.findOne({ email });
 
     if (!user) {
@@ -60,14 +61,17 @@ app.post('/api/login', async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    if (isPasswordValid) {
+      // Sign the JWT token and populate the payload with the user ID
+      const token = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' } // Token expires in 1 hour
+      );
+      res.status(200).json({ message: 'Login successful', token: token });
+    } else {
+      res.status(401).json({ message: 'Invalid credentials' });
     }
-
-    // Here you would also generate a token or session for the user
-    // But for simplicity, we'll skip this part
-
-    res.status(200).json({ message: 'Login successful' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });

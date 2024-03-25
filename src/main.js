@@ -6,10 +6,21 @@ import { QuillEditor } from '@vueup/vue-quill'; // Import the QuillEditor compon
 
 // Import Quill and VueQuill styles
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faArrowLeft, faBars, faCircleXmark, faClock, faGear, faList, faMusic } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+library.add(faBars)
+library.add(faList)
+library.add(faClock)
+library.add(faMusic)
+library.add(faGear)
+library.add(faCircleXmark)
+library.add(faArrowLeft)
 
 
 
 const app = createApp(App)
 app.use(router)
 app.component('QuillEditor', QuillEditor);
+app.component('font-awesome-icon', FontAwesomeIcon)
 app.mount('#app')

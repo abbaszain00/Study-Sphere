@@ -17,8 +17,11 @@ export default {
 </script>
 
 <style>
+body {
+  overflow: hidden;
+}
 .dash-container {
-    background-color: rgba(223, 222, 222, 0.637);
+    background-color: white;
     height: 100vh;
   }
   

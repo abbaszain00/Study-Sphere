@@ -48,33 +48,34 @@
   },
   methods: {
     async handleLogin() {
-      try {
-        const response = await fetch('http://localhost:3000/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: this.email,
-            password: this.password,
-          }),
-        });
+  try {
+    const response = await fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: this.email,
+        password: this.password,
+      }),
+    });
 
-        const data = await response.json();
+    const data = await response.json(); // Parse JSON response
 
-        if (!response.ok) {
-          throw new Error(data.message || 'Login failed');
-        }
-
-        alert(data.message); // Login successful
-        this.$router.push({ name: 'dash' });// Here you can redirect the user to another page or save the login state
-      } catch (error) {
-        console.error('Error:', error);
-        alert(error.message);
-      }
+    if (!response.ok) {
+      throw new Error(data.message || 'Login failed');
     }
+
+    alert(data.message); // Ensure this line executes correctly
+    this.$router.push({ name: 'dash' }); // Redirects user
+  } catch (error) {
+    console.error('Error:', error);
+    alert(error.message); // Displays error message
   }
 }
+  }
+}
+
 
  </script>
  
