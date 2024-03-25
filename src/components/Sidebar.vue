@@ -5,7 +5,7 @@
       <font-awesome-icon icon="bars" size="2x"/>
     </button>
 <!-- Sidebar content -->
-<div v-if="isSidebarOpen" class="sidebar" @click.stop>
+<div class="sidebar" :class="{ 'sidebar-open': isSidebarOpen }" @click.stop>
       <!-- Sidebar icons -->
       <nav class="sidebar-icons">
         <button @click="closeSidebar"><font-awesome-icon icon="arrow-left" size="2x"/></button>
@@ -13,7 +13,8 @@
         <button><font-awesome-icon icon="clock" size="2x"/><p>Pomodoro</p></button>
         <button><font-awesome-icon icon="music" size="2x"/><p>Sounds</p></button>
         <button><font-awesome-icon icon="gear" size="2x"/><p>Settings</p></button>
-        <button @click="logoutUser"><font-awesome-icon icon="circle-xmark" size="2x"/><p>Log out</p></button>
+        <button @click="logoutUser"><font-awesome-icon icon="circle-xmark" size="2x" :style="{ color: '#ff0000' }"/>
+        <p>Log out</p></button>
       </nav>
     </div>
 
@@ -49,15 +50,20 @@ export default {
 
 <style>
 /* Basic styling */
+/* Updated styling */
 .sidebar {
-  width: 80px;
+  width: 80px; /* Adjust based on your desired sidebar width */
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
   background-color: white;
-  /* Adjust transition for the animation */
   transition: transform 0.3s ease;
+  transform: translateX(-100%); /* Initially hide sidebar */
+}
+
+.sidebar-open {
+  transform: translateX(0%); /* Show sidebar */
 }
 
 
@@ -83,9 +89,7 @@ export default {
   justify-content: center;
   text-align: center;
   padding-top: 20px;
-  margin: 0px;
   cursor: pointer;
-
 }
 
 .sidebar-icons button {
@@ -96,7 +100,6 @@ export default {
   cursor: pointer;
   font-weight: bold;
   font-family: 'Inter', sans-serif;
-
 }
 
 .sidebar-icons button:hover {

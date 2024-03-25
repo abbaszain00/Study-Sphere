@@ -1,8 +1,10 @@
 <template>
     <div class="header">
       <Sidebar/>
-      <h1>Dashboard</h1>
-    
+      <router-link to="/dashboard" class="dash-logo">
+      <h1>StudySphere</h1>
+    </router-link>
+
     </div>
   </template>
   
@@ -23,11 +25,17 @@
     display: flex;
     border-bottom: 2px solid;
   }
-  .header  h1{
-   padding-left: 200px;
-   margin: auto;
-   padding-right: 50px;
-  font-family: "Inter";
+  .dash-logo {
+    text-decoration: none;
+    font-family: "Inter";
+    margin: auto;
+
+  }
+
+  .dash-logo h1 {
+    margin: auto;
+    font-family: "Inter";
+    color: black;
   }
   
   
