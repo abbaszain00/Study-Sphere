@@ -79,6 +79,120 @@ app.post('/api/login', async (req, res) => {
     await client.close();
   }
 });
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1]; // Assuming token is sent as "Bearer <token>"
+  if (!token) {
+    return res.status(403).json({ message: "No token provided" });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId; // Append userId to the request
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({ message: "Invalid token" });
+  }
+};
+
+// Create a new document
+app.post('/api/documents', authenticate, async (req, res) => {
+  const { title, content } = req.body;
+  const userId = req.userId; // Use userId from the authenticate middleware
+
+  const newDocument = {
+    title,
+    content,
+    userId,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  try {
+    await client.connect();
+    const database = client.db('study-sphere');
+    const documents = database.collection('documents');
+
+    await documents.insertOne(newDocument);
+
+    res.status(201).json({ message: 'Document created successfully', document: newDocument });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    await client.close();
+  }
+});
+
+// Get all documents
+app.get('/api/documents', authenticate, async (req, res) => {
+  const userId = req.userId;
+  try {
+    await client.connect();
+    const database = client.db('study-sphere');
+    const documents = database.collection('documents');
+    const userDocuments = await documents.find({ userId }).toArray(); // Fetch only user's documents
+    res.status(200).json(userDocuments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    await client.close();
+  }
+});
+
+
+// Update a document
+app.put('/api/documents/:id', async (req, res) => {
+  try {
+    await client.connect();
+    const database = client.db('study-sphere');
+    const documents = database.collection('documents');
+
+    const { id } = req.params;
+    const { title, content } = req.body;
+
+    const updatedDoc = await documents.updateOne(
+      { _id: new MongoClient.ObjectID(id) },
+      { $set: { title, content, updatedAt: new Date() } }
+    );
+
+    if (updatedDoc.matchedCount === 0) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+
+    res.status(200).json({ message: 'Document updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    await client.close();
+  }
+});
+
+
+// Delete a document
+app.delete('/api/documents/:id', async (req, res) => {
+  try {
+    await client.connect();
+    const database = client.db('study-sphere');
+    const documents = database.collection('documents');
+
+    const { id } = req.params;
+
+    const deletedDoc = await documents.deleteOne({ _id: new MongoClient.ObjectID(id) });
+
+    if (deletedDoc.deletedCount === 0) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+
+    res.status(200).json({ message: 'Document deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    await client.close();
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

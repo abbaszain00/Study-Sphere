@@ -2,24 +2,44 @@
   <div>
     <!-- Sidebar toggle button -->
     <button @click="toggleSidebar" class="icon-button">
-      <font-awesome-icon icon="bars" size="2x"/>
+      <font-awesome-icon icon="bars" size="2x" />
     </button>
-<!-- Sidebar content -->
-<div class="sidebar" :class="{ 'sidebar-open': isSidebarOpen }" @click.stop>
+    <!-- Sidebar content -->
+    <div class="sidebar" :class="{ 'sidebar-open': isSidebarOpen }" @click.stop>
       <!-- Sidebar icons -->
       <nav class="sidebar-icons">
-        <button @click="closeSidebar"><font-awesome-icon icon="arrow-left" size="2x"/></button>
-        <button><font-awesome-icon icon="list" size="2x"/><p>To-Do</p></button>
-        <button><font-awesome-icon icon="clock" size="2x"/><p>Pomodoro</p></button>
-        <button><font-awesome-icon icon="music" size="2x"/><p>Sounds</p></button>
-        <button><font-awesome-icon icon="gear" size="2x"/><p>Settings</p></button>
-        <button @click="logoutUser"><font-awesome-icon icon="circle-xmark" size="2x" :style="{ color: '#ff0000' }"/>
-        <p>Log out</p></button>
+        <button @click="closeSidebar">
+          <font-awesome-icon icon="arrow-left" size="2x" />
+        </button>
+        <button>
+          <font-awesome-icon icon="list" size="2x" />
+          <p>To-Do</p>
+        </button>
+        <button>
+          <font-awesome-icon icon="clock" size="2x" />
+          <p>Pomodoro</p>
+        </button>
+        <button>
+          <font-awesome-icon icon="music" size="2x" />
+          <p>Sounds</p>
+        </button>
+        <button>
+          <font-awesome-icon icon="gear" size="2x" />
+          <p>Settings</p>
+        </button>
+        <button @click="logoutUser">
+          <font-awesome-icon
+            icon="circle-xmark"
+            size="2x"
+            :style="{ color: '#ff0000' }"
+          />
+          <p>Log out</p>
+        </button>
       </nav>
     </div>
 
     <!-- Overlay to detect clicks outside -->
-    <div v-show="isSidebarOpen"  @click="closeSidebar"></div>
+    <div v-show="isSidebarOpen" @click="closeSidebar"></div>
   </div>
 </template>
 
@@ -39,13 +59,13 @@ export default {
     },
     logoutUser() {
       // Example: Clear user data stored in localStorage or Vuex
-      localStorage.removeItem('token'); // Assuming you store a token
-
+      localStorage.removeItem("token"); // Assuming you store a token
+      setAuthToken(false);
       // Redirect to the homepage
-      this.$router.push({ name: 'Home' });
-    }
-  }
-} 
+      this.$router.push({ name: "Home" });
+    },
+  },
+};
 </script>
 
 <style>
@@ -65,8 +85,6 @@ export default {
 .sidebar-open {
   transform: translateX(0%); /* Show sidebar */
 }
-
-
 
 .icon-button {
   background: none; /* Remove default background */
@@ -99,12 +117,10 @@ export default {
   border: none;
   cursor: pointer;
   font-weight: bold;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .sidebar-icons button:hover {
   background-color: rgba(231, 231, 231, 0.877);
 }
-
-
 </style>
