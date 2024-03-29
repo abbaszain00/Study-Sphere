@@ -3,6 +3,8 @@ import App from './App.vue';
 import router from './router'; // Import the router configuration
 import './assets/main.css';
 import { QuillEditor } from '@vueup/vue-quill'; // Import the QuillEditor component
+import store from './store';
+import axios from 'axios';
 
 // Import Quill and VueQuill styles
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -16,6 +18,7 @@ library.add(faMusic)
 library.add(faGear)
 library.add(faCircleXmark)
 library.add(faArrowLeft)
+axios.defaults.baseURL = 'http://localhost:3000';
 
 
 
@@ -23,4 +26,5 @@ const app = createApp(App)
 app.use(router)
 app.component('QuillEditor', QuillEditor);
 app.component('font-awesome-icon', FontAwesomeIcon)
+app.use(store)
 app.mount('#app')

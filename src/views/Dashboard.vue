@@ -4,15 +4,13 @@
   </div>
   <div class="dash-container">
     <div class="file-section">
-      <!-- Button to create a new document -->
       <button @click="createNewDocument">Create New Document</button>
 
-      <!-- List of documents -->
       <div class="document-list">
         <div
           v-for="document in documents"
-          :key="document.id"
-          @click="openDocument(document.id)"
+          :key="document._id"
+          @click="openDocument(document._id)"
           class="document-item"
         >
           {{ document.title }}
@@ -24,32 +22,22 @@
 
 <script>
 import Top from "@/components/Top.vue";
-// Import Axios if you're making HTTP requests
-import axios from "axios";
+import { mapActions, mapState } from "vuex";
 
 export default {
   components: {
     Top,
   },
-  data() {
-    return {
-      documents: [], // Array to store documents
-    };
+  computed: {
+    ...mapState(["documents"]), // Maps state.documents to this.documents
   },
   methods: {
-    fetchDocuments() {
-      axios
-        .get("/api/documents")
-        .then((response) => {
-          this.documents = response.data;
-        })
-        .catch((error) => console.error("Error fetching documents:", error));
-    },
+    ...mapActions(["fetchDocuments"]), // Maps store action fetchDocuments to this method
     createNewDocument() {
-      this.$router.push({ name: "CreateDocument" }); // Assuming you have a route named 'CreateDocument'
+      this.$router.push({ name: "CreateDocument" });
     },
     openDocument(documentId) {
-      this.$router.push({ name: "EditDocument", params: { id: documentId } }); // Assuming you have a route named 'EditDocument'
+      this.$router.push({ name: "EditDocument", params: { id: documentId } });
     },
   },
   mounted() {

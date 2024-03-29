@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -58,11 +60,9 @@ export default {
       this.isSidebarOpen = false;
     },
     logoutUser() {
-      // Example: Clear user data stored in localStorage or Vuex
-      localStorage.removeItem("token"); // Assuming you store a token
-      setAuthToken(false);
-      // Redirect to the homepage
-      this.$router.push({ name: "Home" });
+      localStorage.removeItem("token"); // Clear the stored token
+      axios.defaults.headers.common["Authorization"] = ""; // Remove the token from future requests
+      this.$router.push("/Signin"); // Redirect to the login page
     },
   },
 };

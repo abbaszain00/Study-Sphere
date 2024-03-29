@@ -50,12 +50,12 @@ const routes = [
     component: () => import('@/views/CreateDocument.vue'), // Lazy load the CreateDocument view
     meta: { public: false }, // This route is protected
   },
-  {
-    path: '/edit/:id',
-    name: 'EditDocument',
-    component: () => import('@/views/EditDocument.vue'), // Lazy load the EditDocument view
-    meta: { public: false }, // This route is protected
-  },
+  // {
+  //   path: '/edit/:id',
+  //   name: 'EditDocument',
+  //   component: () => import('@/views/EditDocument.vue'), 
+  //   meta: { public: false },
+  // },
 ];
 
 const router = createRouter({

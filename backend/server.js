@@ -64,7 +64,7 @@ app.post('/api/login', async (req, res) => {
     if (isPasswordValid) {
       // Sign the JWT token and populate the payload with the user ID
       const token = jwt.sign(
-        { userId: user._id },
+        { userId: user._id.toString() },
         process.env.JWT_SECRET,
         { expiresIn: '1h' } // Token expires in 1 hour
       );
@@ -125,12 +125,12 @@ app.post('/api/documents', authenticate, async (req, res) => {
 
 // Get all documents
 app.get('/api/documents', authenticate, async (req, res) => {
-  const userId = req.userId;
+  const userId = req.userId; // Assuming this is a string extracted from the JWT token
   try {
     await client.connect();
     const database = client.db('study-sphere');
     const documents = database.collection('documents');
-    const userDocuments = await documents.find({ userId }).toArray(); // Fetch only user's documents
+    const userDocuments = await documents.find({ userId: userId }).toArray();
     res.status(200).json(userDocuments);
   } catch (error) {
     console.error(error);

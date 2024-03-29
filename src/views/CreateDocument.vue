@@ -45,10 +45,15 @@ export default {
       };
 
       axios
-        .post("http://localhost:3000/api/documents", documentData)
+        .post("http://localhost:3000/api/documents", documentData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
 
-        .then(() => {
-          this.$router.push("/"); // Navigate to the document list view after creation
+        .then((response) => {
+          this.$store.dispatch("createDocument", response.data.document); // Assuming your backend returns the created document
+          this.$router.push({ name: "dash" });
         })
         .catch((error) => {
           console.error("Failed to create document:", error);
