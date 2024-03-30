@@ -1,8 +1,9 @@
 require('dotenv').config({ path: '../.env' });
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
+const sanitizeHtml = require('sanitize-html');
 
 
 const app = express();
@@ -96,31 +97,41 @@ const authenticate = (req, res, next) => {
 
 // Create a new document
 app.post('/api/documents', authenticate, async (req, res) => {
-  const { title, content } = req.body;
-  const userId = req.userId; // Use userId from the authenticate middleware
+    const { title, content } = req.body;
+    const userId = req.userId; // Use userId from the authenticate middleware
 
-  const newDocument = {
-    title,
-    content,
-    userId,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
+    // Sanitize the content to ensure it's safe to store and display
+    const sanitizedContent = sanitizeHtml(content, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2']), // Customize to your needs
+        allowedAttributes: {
+            'a': ['href', 'name', 'target'],
+            'img': ['src']
+            // Add other attributes you want to allow
+        }
+    });
 
-  try {
-    await client.connect();
-    const database = client.db('study-sphere');
-    const documents = database.collection('documents');
+    const newDocument = {
+        title,
+        content: sanitizedContent, // Store the sanitized content
+        userId,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    };
 
-    await documents.insertOne(newDocument);
+    try {
+        await client.connect();
+        const database = client.db('study-sphere');
+        const documents = database.collection('documents');
 
-    res.status(201).json({ message: 'Document created successfully', document: newDocument });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  } finally {
-    await client.close();
-  }
+        await documents.insertOne(newDocument);
+
+        res.status(201).json({ message: 'Document created successfully', document: newDocument });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        await client.close();
+    }
 });
 
 // Get all documents
@@ -171,28 +182,35 @@ app.put('/api/documents/:id', async (req, res) => {
 
 
 // Delete a document
-app.delete('/api/documents/:id', async (req, res) => {
+app.delete('/api/documents/:id', authenticate, async (req, res) => {
   try {
     await client.connect();
     const database = client.db('study-sphere');
     const documents = database.collection('documents');
 
+    // Use the 'new' keyword with ObjectId
     const { id } = req.params;
+    console.log("Attempting to delete document with ID:", id); // Debug log
 
-    const deletedDoc = await documents.deleteOne({ _id: new MongoClient.ObjectID(id) });
+    // Use the 'new' keyword to create a new ObjectId instance
+    const deletedDoc = await documents.deleteOne({ _id: new ObjectId(id) });
 
     if (deletedDoc.deletedCount === 0) {
+      console.log("Document not found with ID:", id); // Debug log
       return res.status(404).json({ message: 'Document not found' });
     }
 
+    console.log("Document deleted successfully with ID:", id); // Debug log
     res.status(200).json({ message: 'Document deleted successfully' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error deleting document:", error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   } finally {
     await client.close();
   }
 });
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

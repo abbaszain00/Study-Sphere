@@ -2,9 +2,7 @@
   <div class="create-document">
     <h2>Create New Document</h2>
     <div class="form-group">
-      <!-- Label for the document title input -->
       <label for="documentTitle">Title</label>
-      <!-- Ensure the input's id matches the label's for attribute -->
       <input
         type="text"
         id="documentTitle"
@@ -13,17 +11,19 @@
       />
     </div>
     <div class="form-group">
-      <!-- Since Quill Editor doesn't have an id, you might omit the for attribute or handle it differently -->
       <label>Content</label>
-      <!-- Quill editor for document content -->
-      <quill-editor v-model="content" :options="editorOptions"></quill-editor>
+      <quill-editor
+        v-model:content="modelname"
+        contentType="html"
+        theme="snow"
+      ></quill-editor>
     </div>
     <button @click="submitDocument">Create Document</button>
   </div>
 </template>
 
 <script>
-import { QuillEditor } from "@vueup/vue-quill"; // Import this based on how you installed Quill for Vue
+import { QuillEditor } from "@vueup/vue-quill";
 import axios from "axios";
 
 export default {
@@ -33,26 +33,27 @@ export default {
   data() {
     return {
       title: "",
-      content: "",
-      editorOptions: {}, // Specify any options for Quill editor here
+      modelname: "", // Add this line if modelname should be part of the component's data
+      editorOptions: {}, // Configure your Quill editor options here
     };
   },
   methods: {
     submitDocument() {
       const documentData = {
         title: this.title,
-        content: this.content,
+        content: this.modelname,
       };
 
+      console.log(documentData); // Debug to check the content
+
       axios
-        .post("http://localhost:3000/api/documents", documentData, {
+        .post("/api/documents", documentData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         })
-
         .then((response) => {
-          this.$store.dispatch("createDocument", response.data.document); // Assuming your backend returns the created document
+          // If document creation is successful, navigate to the dashboard
           this.$router.push({ name: "dash" });
         })
         .catch((error) => {

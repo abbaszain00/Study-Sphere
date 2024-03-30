@@ -13,34 +13,54 @@ export default createStore({
     // Mutation to add a new document to the state
     addDocument(state, newDocument) {
       state.documents.push(newDocument);
+    },
+    // Mutation to remove a document by its ID
+    removeDocument(state, documentId) {
+      state.documents = state.documents.filter(doc => doc._id !== documentId);
     }
   },
   actions: {
-    addNewDocument({ commit }, newDocument) {
-        commit('addDocument', newDocument);
+    // Action to delete a document by its ID
+    deleteDocumentById({ commit }, documentId) {
+      const token = localStorage.getItem('token');
+      axios.delete(`/api/documents/${documentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        commit('removeDocument', documentId);
+      })
+      .catch(error => console.error("Error deleting document:", error));
     },
+
     // Action to fetch documents from the backend and commit to state
     fetchDocuments({ commit }) {
-        const token = localStorage.getItem('token');
-        axios.get('/api/documents', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then(response => {
-          commit('setDocuments', response.data);
-        })
-        .catch(error => console.error("Error fetching documents:", error));
-      },
-      
+      const token = localStorage.getItem('token');
+      axios.get('/api/documents', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(response => {
+        commit('setDocuments', response.data);
+      })
+      .catch(error => console.error("Error fetching documents:", error));
+    },
+    
     // Action to post a new document to the backend and add to state upon success
     createDocument({ commit }, documentData) {
-      axios.post('/api/documents', documentData)
-        .then(response => {
-          commit('addDocument', response.data); // Assuming your API returns the newly created document
-          // If your API returns the document under a specific property, adjust accordingly, e.g., response.data.document
-        })
-        .catch(error => console.error("Error creating document:", error));
+      const token = localStorage.getItem('token');
+      axios.post('/api/documents', documentData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(response => {
+        commit('addDocument', response.data.document); // Adjust based on actual response structure
+      })
+      .catch(error => console.error("Error creating document:", error));
     }
   }
 });
