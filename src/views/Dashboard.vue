@@ -14,6 +14,7 @@
           v-for="document in documents"
           :key="document._id"
           class="document-item"
+          @click="openDocument(document._id)"
         >
           <input
             type="checkbox"
@@ -21,8 +22,6 @@
             :value="document._id"
           />
           {{ document.title }}
-          <!-- Removed individual delete button -->
-          <button @click.stop="openDocument(document._id)">Open</button>
         </div>
       </div>
     </div>
@@ -101,15 +100,13 @@ body {
 }
 
 .document-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   cursor: pointer;
   padding: 10px;
-  border-bottom: 1px solid #ccc;
+  margin: 5px 0;
+  border-radius: 4px;
 }
 
 .document-item:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0; /* Light grey background on hover */
 }
 </style>
