@@ -56,28 +56,28 @@ export default {
       }
     },
 
-    async fetchDocument() {
-      const token = localStorage.getItem("token");
-      try {
-        const response = await axios.get(
-          `/api/documents/${this.$route.params.id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        this.title = response.data.title;
-        this.modelname = response.data.content; // Assign content here
-        this.originalModelname = response.data.content; // Store original content
-      } catch (error) {
-        console.error("Failed to fetch document:", error);
-      }
-    },
+    // async fetchDocument() {
+    //   const token = localStorage.getItem("token");
+    //   try {
+    //     const response = await axios.get(
+    //       `/api/documents/${this.$route.params.id}`,
+    //       {
+    //         headers: { Authorization: `Bearer ${token}` },
+    //       }
+    //     );
+    //     this.title = response.data.title;
+    //     this.modelname = response.data.content; // Assign content here
+    //     this.originalModelname = response.data.content; // Store original content
+    //   } catch (error) {
+    //     console.error("Failed to fetch document:", error);
+    //   }
+    // },
 
     async saveDocument() {
       const token = localStorage.getItem("token");
       const documentData = {
         title: this.title,
-        content: this.content,
+        content: this.modelname,
         originalContent: this.originalContent, // Include original content
       };
 
