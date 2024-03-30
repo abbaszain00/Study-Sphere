@@ -175,9 +175,6 @@ app.get('/api/documents/:id', authenticate, async (req, res) => {
 
 
 // Update a document
-
-
-
 app.put('/api/documents/:id', authenticate, async (req, res) => {
   const { title, content } = req.body;
   const userId = req.userId; // Use userId from the authenticate middleware
@@ -220,8 +217,36 @@ app.put('/api/documents/:id', authenticate, async (req, res) => {
       await client.close();
   }
 });
-
-
+// Delete a document
+  app.delete('/api/documents/:id', authenticate, async (req, res) => {
+    try {
+      await client.connect();
+      const database = client.db('study-sphere');
+      const documents = database.collection('documents');
+  
+      // Use the 'new' keyword with ObjectId
+      const { id } = req.params;
+      console.log("Attempting to delete document with ID:", id); // Debug log
+  
+      // Use the 'new' keyword to create a new ObjectId instance
+      const deletedDoc = await documents.deleteOne({ _id: new ObjectId(id) });
+  
+      if (deletedDoc.deletedCount === 0) {
+        console.log("Document not found with ID:", id); // Debug log
+        return res.status(404).json({ message: 'Document not found' });
+      }
+  
+      console.log("Document deleted successfully with ID:", id); // Debug log
+      res.status(200).json({ message: 'Document deleted successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+      console.error("Error deleting document:", error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    } finally {
+      await client.close();
+    }
+  });
 
 
 const PORT = process.env.PORT || 3000;

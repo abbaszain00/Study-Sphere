@@ -20,6 +20,7 @@ export default createStore({
     }
   },
   actions: {
+    
     // Action to delete a document by its ID
     deleteDocumentById({ commit }, documentId) {
       const token = localStorage.getItem('token');
