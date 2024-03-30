@@ -1,10 +1,8 @@
 <template>
-  <div class="create-document">
-    <h2>Create New Document</h2>
+  <div class="edit-document">
+    <h2>Edit Document</h2>
     <div class="form-group">
-      <!-- Label for the document title input -->
       <label for="documentTitle">Title</label>
-      <!-- Ensure the input's id matches the label's for attribute -->
       <input
         type="text"
         id="documentTitle"
@@ -13,59 +11,98 @@
       />
     </div>
     <div class="form-group">
-      <!-- Since Quill Editor doesn't have an id, you might omit the for attribute or handle it differently -->
       <label>Content</label>
-      <!-- Quill editor for document content -->
-      <quill-editor v-model="content" :options="editorOptions"></quill-editor>
+      <quill-editor
+        v-model:content="modelname"
+        contentType="html"
+        theme="snow"
+      ></quill-editor>
     </div>
-    <button @click="submitDocument">Create Document</button>
+    <button @click="saveDocument">Save Changes</button>
   </div>
 </template>
 
 <script>
-import { QuillEditor } from "@vueup/vue-quill"; // Import this based on how you installed Quill for Vue
+import { QuillEditor } from "@vueup/vue-quill";
 import axios from "axios";
 
 export default {
   components: {
     QuillEditor,
   },
-  // EditDocument.vue
   data() {
     return {
-      document: null, // For storing the document to be edited
+      title: "",
+      content: "",
+      modelname: "",
+      editorOptions: {}, // Configure your Quill editor options here
     };
-  },
-  async mounted() {
-    await this.fetchDocument();
   },
   methods: {
     async fetchDocument() {
-      const documentId = this.$route.params.documentId;
+      const token = localStorage.getItem("token");
       try {
-        const response = await axios.get(`/api/documents/${documentId}`);
-        this.document = response.data;
+        const response = await axios.get(
+          `/api/documents/${this.$route.params.id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        this.title = response.data.title;
+        console.log("This is it: ", response.data.content);
+        this.modelname = response.data.content; // Assign content here
       } catch (error) {
-        console.error("Failed to load document:", error);
-        // Handle error, e.g., show notification or redirect
+        console.error("Failed to fetch document:", error);
       }
     },
-    async saveDocument() {
-      const documentId = this.$route.params.documentId;
+
+    async fetchDocument() {
+      const token = localStorage.getItem("token");
       try {
-        await axios.put(`/api/documents/${documentId}`, this.document);
-        // Handle success, e.g., show notification or redirect back to dashboard
+        const response = await axios.get(
+          `/api/documents/${this.$route.params.id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        this.title = response.data.title;
+        this.modelname = response.data.content; // Assign content here
+        this.originalModelname = response.data.content; // Store original content
+      } catch (error) {
+        console.error("Failed to fetch document:", error);
+      }
+    },
+
+    async saveDocument() {
+      const token = localStorage.getItem("token");
+      const documentData = {
+        title: this.title,
+        content: this.content,
+        originalContent: this.originalContent, // Include original content
+      };
+
+      try {
+        await axios.put(
+          `/api/documents/${this.$route.params.id}`,
+          documentData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        this.$router.push({ name: "dash" });
       } catch (error) {
         console.error("Failed to save document:", error);
-        // Handle error, e.g., show notification
       }
     },
+  },
+  mounted() {
+    this.fetchDocument();
   },
 };
 </script>
 
 <style scoped>
-.create-document {
+.edit-document {
   max-width: 800px;
   margin: auto;
   padding: 20px;
