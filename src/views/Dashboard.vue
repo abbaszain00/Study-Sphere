@@ -5,25 +5,42 @@
   <div class="dash-container">
     <div class="file-section">
       <button @click="createNewDocument">Create New Document</button>
-      <!-- Add a button for deleting selected documents -->
-      <button @click="deleteSelectedDocuments">
+      <button @click="toggleEditMode">Edit</button>
+      <button v-if="isEditing" @click="deleteSelectedDocuments">
         Delete Selected Documents
       </button>
-      <div class="document-list">
-        <div
-          v-for="document in documents"
-          :key="document._id"
-          class="document-item"
-          @click="openDocument(document._id)"
-        >
-          <input
-            type="checkbox"
-            v-model="selectedDocuments"
-            :value="document._id"
-          />
-          {{ document.title }}
-        </div>
-      </div>
+
+      <!-- Table structure for documents -->
+      <table class="documents-table">
+        <thead>
+          <tr>
+            <th v-if="isEditing">Select</th>
+            <!-- Column for checkboxes -->
+            <th>Name</th>
+            <th>Last Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="document in documents"
+            :key="document._id"
+            @click="openDocument(document._id, $event)"
+          >
+            <!-- Conditional checkbox column -->
+            <td v-if="isEditing">
+              <input
+                type="checkbox"
+                v-model="selectedDocuments"
+                :value="document._id"
+              />
+            </td>
+            <td>{{ document.title }}</td>
+            <td>{{ formatDate(document.updatedAt) }}</td>
+
+            <!-- Assuming you have a 'lastUpdated' field -->
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -38,19 +55,22 @@ export default {
   },
   data() {
     return {
-      selectedDocuments: [], // Add this line to keep track of selected documents
+      selectedDocuments: [],
+      isEditing: false,
     };
   },
   computed: {
-    ...mapState(["documents"]), // Maps state.documents to this.documents
+    ...mapState(["documents"]),
   },
   methods: {
-    ...mapActions(["fetchDocuments", "deleteDocumentById"]), // Keep as is if deleteDocumentById can handle array inputs
+    ...mapActions(["fetchDocuments", "deleteDocumentById"]),
     createNewDocument() {
       this.$router.push({ name: "CreateDocument" });
     },
-    openDocument(documentId) {
-      this.$router.push({ name: "EditDocument", params: { id: documentId } });
+    openDocument(documentId, event) {
+      if (!this.isEditing) {
+        this.$router.push({ name: "EditDocument", params: { id: documentId } });
+      }
     },
     deleteSelectedDocuments() {
       if (
@@ -72,9 +92,23 @@ export default {
           });
       }
     },
+    toggleEditMode() {
+      this.isEditing = !this.isEditing;
+    },
+    formatDate(value) {
+      if (!value) return "";
+      // You can adjust the formatting as per your requirements
+      return new Date(value).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    },
   },
   mounted() {
-    this.fetchDocuments(); // Fetch documents when the component mounts
+    this.fetchDocuments();
   },
 };
 </script>
@@ -108,5 +142,30 @@ body {
 
 .document-item:hover {
   background-color: #f0f0f0; /* Light grey background on hover */
+}
+.documents-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.documents-table th,
+.documents-table td {
+  /* border: 1px solid #ddd; */
+  padding: 8px;
+  text-align: left;
+}
+
+.documents-table th {
+  background-color: #f2f2f2;
+}
+
+.documents-table tr:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+/* Style adjustments for when in editing mode */
+.documents-table tr[isEditing] {
+  cursor: default; /* Prevents the cursor pointer style */
 }
 </style>

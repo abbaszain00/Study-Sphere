@@ -1,4 +1,6 @@
 <template>
+  <Top />
+
   <div class="create-document">
     <h2>Create New Document</h2>
     <div class="form-group">
@@ -25,10 +27,12 @@
 <script>
 import { QuillEditor } from "@vueup/vue-quill";
 import axios from "axios";
+import Top from "@/components/Top.vue";
 
 export default {
   components: {
     QuillEditor,
+    Top,
   },
   data() {
     return {
