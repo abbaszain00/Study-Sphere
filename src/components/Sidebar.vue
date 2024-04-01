@@ -23,13 +23,13 @@
           <font-awesome-icon icon="music" size="2x" />
           <p>Sounds</p>
         </button>
-        <button>
-          <font-awesome-icon icon="gear" size="2x" />
-          <p>Settings</p>
-        </button>
         <button @click="toggleChatBot">
           <font-awesome-icon icon="comment" size="2x" />
           <p>Chat-Bot</p>
+        </button>
+        <button>
+          <font-awesome-icon icon="gear" size="2x" />
+          <p>Settings</p>
         </button>
         <button @click="logoutUser">
           <font-awesome-icon
