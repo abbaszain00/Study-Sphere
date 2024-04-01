@@ -1,10 +1,9 @@
 <template>
-  <Top />
+  <nav class="top"><Top /></nav>
 
   <div class="edit-document">
-    <h2>Edit Document</h2>
-    <div class="form-group">
-      <label for="documentTitle">Title</label>
+    <div class="title">
+      <label for="documentTitle"> </label>
       <input
         type="text"
         id="documentTitle"
@@ -13,7 +12,7 @@
       />
     </div>
     <div class="form-group">
-      <label>Content</label>
+      <!-- <label>Content</label> -->
       <quill-editor
         v-model:content="modelname"
         contentType="html"
@@ -102,43 +101,120 @@ export default {
   mounted() {
     this.fetchDocument();
   },
+  beforeRouteLeave(to, from, next) {
+    // Automatically save the document before leaving the page
+    this.saveDocument();
+
+    // Call next() to proceed with the route navigation
+    next();
+  },
 };
 </script>
 
-<style scoped>
-.edit-document {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
+<style>
+.title {
+  justify-content: center;
+  display: flex;
+}
+.title input[type="text"] {
+  font-size: 1.5rem; /* Adjust the font size as needed */
+  border: 1px solid #ccc; /* Light grey border for minimal appearance */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* Slightly transparent background */
+  width: 100%; /* Adjust the width as necessary */
+  padding: 8px 12px; /* Padding for better text alignment */
+  border-radius: 5px; /* Slightly rounded corners for a softer look */
+  outline: none; /* Removes the outline to keep the design clean */
+  box-shadow: none; /* Avoids any shadow for a flat design */
+  transition: all 0.3s ease; /* Smooth transition for focus effect */
+  text-align: center; /* Centers text horizontally */
+  display: block; /* Ensures the input behaves as a block-level element */
+  margin: 0 auto; /* Centers the input field within its container */
 }
 
-.form-group {
-  margin-bottom: 20px;
+.title input[type="text"]:focus {
+  border-color: #007bff; /* Highlight color when the input is focused */
+  background-color: white; /* Fully opaque background on focus */
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Subtle glow effect */
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
-
-.form-group input,
-.form-group .quill-editor {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+body {
+  background-color: #f3f3f3;
+  margin: 0;
+  overflow-y: auto; /* Ensure the body is scrollable */
 }
-
-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
 button:hover {
   background-color: #0056b3;
+}
+nav.top {
+  position: relative; /* Needed to effectively set z-index */
+  z-index: 2; /* Ensure this is higher than the Quill toolbar's z-index */
+}
+
+.form-group .ql-editor {
+  width: 8.5in;
+  min-height: 11in;
+  padding: 1in;
+  margin: 1rem auto; /* Center in the page */
+  box-shadow: 0 0 5px 0 black;
+  background-color: white;
+}
+
+.form-group .ql-container.ql-snow {
+  border: none;
+  display: block; /* Adjusted to block for better control */
+  max-width: 8.5in; /* Match the width of ql-editor */
+  margin: auto; /* Centering it */
+}
+
+.form-group .ql-toolbar.ql-snow {
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #f3f3f3;
+}
+@page {
+  margin: 1inch;
+}
+@media print {
+  body {
+    background-color: none;
+    overflow-y: visible; /* Ensure overflow content is visible */
+  }
+
+  .top {
+    display: none; /* Hide the top navigation bar */
+  }
+
+  .create-document,
+  .form-group {
+    width: 100%; /* Use full width for printing */
+    overflow: visible; /* Ensure content is not clipped */
+    page-break-inside: avoid; /* Avoid breaking inside elements */
+  }
+
+  .form-group .ql-editor {
+    width: 100%; /* Adjusted for print, ensuring it fits the page */
+    height: auto; /* Allow height to adjust based on content */
+    padding: 1in; /* Maintain padding as per requirements */
+    margin: 0 auto; /* Center horizontally */
+    box-shadow: none;
+    page-break-after: auto; /* Allow content to flow across pages */
+  }
+
+  .form-group .ql-toolbar.ql-snow {
+    display: none; /* Hide the editor toolbar */
+  }
 }
 </style>

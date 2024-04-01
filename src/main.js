@@ -9,7 +9,7 @@ import axios from 'axios';
 // Import Quill and VueQuill styles
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faArrowLeft, faBars, faCircleXmark, faClock, faGear, faList, faMusic } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faBars, faCircleXmark, faClock, faComment, faGear, faList, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faBars)
 library.add(faList)
@@ -18,6 +18,7 @@ library.add(faMusic)
 library.add(faGear)
 library.add(faCircleXmark)
 library.add(faArrowLeft)
+library.add(faComment)
 axios.defaults.baseURL = 'http://localhost:3000';
 
 

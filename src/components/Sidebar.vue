@@ -27,6 +27,10 @@
           <font-awesome-icon icon="gear" size="2x" />
           <p>Settings</p>
         </button>
+        <button>
+          <font-awesome-icon icon="comment" size="2x" />
+          <p>Chat-Bot</p>
+        </button>
         <button @click="logoutUser">
           <font-awesome-icon
             icon="circle-xmark"
