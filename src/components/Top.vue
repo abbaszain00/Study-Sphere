@@ -1,6 +1,7 @@
 <template>
   <div class="header">
-    <Sidebar />
+    <Sidebar @toggle-chat-bot="toggleChatBot" />
+    <Chatbot :isVisible="isChatBotVisible" />
     <router-link to="/dashboard" class="dash-logo">
       <h1>StudySphere</h1>
     </router-link>
@@ -9,10 +10,23 @@
 
 <script>
 import Sidebar from "./Sidebar.vue";
+import Chatbot from "./Chatbot.vue";
+
 export default {
   name: "Top",
   components: {
     Sidebar,
+    Chatbot,
+  },
+  data() {
+    return {
+      isChatBotVisible: false,
+    };
+  },
+  methods: {
+    toggleChatBot() {
+      this.isChatBotVisible = !this.isChatBotVisible;
+    },
   },
 };
 </script>

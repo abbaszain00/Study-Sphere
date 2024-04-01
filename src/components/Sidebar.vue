@@ -27,7 +27,7 @@
           <font-awesome-icon icon="gear" size="2x" />
           <p>Settings</p>
         </button>
-        <button>
+        <button @click="toggleChatBot">
           <font-awesome-icon icon="comment" size="2x" />
           <p>Chat-Bot</p>
         </button>
@@ -67,6 +67,9 @@ export default {
       localStorage.removeItem("token"); // Clear the stored token
       axios.defaults.headers.common["Authorization"] = ""; // Remove the token from future requests
       this.$router.push("/Signin"); // Redirect to the login page
+    },
+    toggleChatBot() {
+      this.$emit("toggle-chat-bot"); // Emit an event when the Chat-Bot button is clicked
     },
   },
 };
