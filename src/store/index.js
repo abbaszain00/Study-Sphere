@@ -3,7 +3,8 @@ import axios from 'axios';
 
 export default createStore({
   state: {
-    documents: [] // Defines the initial state for documents
+    documents: [], // Defines the initial state for documents
+    chatMessages: [], // Defines the initial state for chat messages
   },
   mutations: {
     // Mutation to set the documents fetched from the backend
@@ -17,10 +18,17 @@ export default createStore({
     // Mutation to remove a document by its ID
     removeDocument(state, documentId) {
       state.documents = state.documents.filter(doc => doc._id !== documentId);
-    }
+    },
+    // Mutation to add a new chat message
+    addChatMessage(state, message) {
+      state.chatMessages.push(message);
+    },
+    // Mutation to clear chat messages
+    clearChatMessages(state) {
+      state.chatMessages = [];
+    },
   },
   actions: {
-    
     // Action to delete a document by its ID
     deleteDocumentById({ commit }, documentId) {
       const token = localStorage.getItem('token');
@@ -62,6 +70,16 @@ export default createStore({
         commit('addDocument', response.data.document); // Adjust based on actual response structure
       })
       .catch(error => console.error("Error creating document:", error));
-    }
+    },
+
+    // Action to add a new chat message
+    addChatMessage({ commit }, message) {
+      commit('addChatMessage', message);
+    },
+
+    // Action to clear chat messages
+    clearChatMessages({ commit }) {
+      commit('clearChatMessages');
+    },
   }
 });

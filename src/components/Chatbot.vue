@@ -10,7 +10,7 @@
     </div>
     <div class="chat-messages">
       <div
-        v-for="(message, index) in messages"
+        v-for="(message, index) in chatMessages"
         :key="index"
         class="message"
         :class="message.type"
@@ -28,34 +28,55 @@
 </template>
 
 <script>
+import axios from "axios";
+import { mapActions, mapState } from "vuex";
+
 export default {
   data() {
     return {
       isVisible: false,
       userInput: "",
-      messages: [],
       isDragging: false,
       dragStartX: 0,
       dragStartY: 0,
     };
   },
+  computed: {
+    ...mapState(["chatMessages"]),
+  },
   methods: {
-    sendMessage() {
-      this.messages.push({ type: "user", text: this.userInput });
-      this.messages.push({ type: "bot", text: "Reply from ChatGPT" }); // Simulate a reply
-      this.userInput = ""; // Clear input after sending
+    ...mapActions(["addChatMessage"]),
+    async sendMessage() {
+      if (this.userInput.trim()) {
+        const userMessage = { type: "user", text: this.userInput };
+        this.addChatMessage(userMessage);
+
+        try {
+          const response = await axios.post("/api/chat", {
+            message: this.userInput,
+          });
+          this.addChatMessage({ type: "bot", text: response.data.message });
+        } catch (error) {
+          console.error("Error sending message:", error);
+          this.addChatMessage({
+            type: "bot",
+            text: "Sorry, I can't respond at the moment.",
+          });
+        }
+
+        this.userInput = ""; // Clear input after sending
+      }
     },
     dragStart(event) {
       this.isDragging = true;
       const chatbox = this.$el; // This should reference the chatbot container now
       this.dragStartX = event.clientX - chatbox.offsetLeft;
       this.dragStartY = event.clientY - chatbox.offsetTop;
-      event.preventDefault(); // This might not be necessary
     },
     dragging(event) {
       if (this.isDragging) {
-        this.$el.style.left = event.clientX - this.dragStartX + "px";
-        this.$el.style.top = event.clientY - this.dragStartY + "px";
+        this.$el.style.left = `${event.clientX - this.dragStartX}px`;
+        this.$el.style.top = `${event.clientY - this.dragStartY}px`;
       }
     },
     dragEnd() {
@@ -84,7 +105,7 @@ export default {
 }
 
 .chat-header {
-  background-color: #007bff;
+  background-color: black;
   color: white;
   padding: 10px;
   cursor: move; /* Indicate the header is draggable */
@@ -104,8 +125,8 @@ export default {
 
 .user {
   align-self: flex-end;
-  background-color: #007bff;
-  color: white;
+  background-color: grey;
+  color: black;
 }
 
 .bot {

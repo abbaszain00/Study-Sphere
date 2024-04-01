@@ -4,6 +4,7 @@ const { MongoClient, ObjectId } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const sanitizeHtml = require('sanitize-html');
+const OpenAI = require('openai');
 const jwt = require('jsonwebtoken');
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Assuming token is sent as "Bearer <token>"
@@ -27,6 +28,10 @@ app.use(cors());
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // Initialize MongoDB connection once
 let db;
@@ -215,6 +220,29 @@ app.delete('/api/documents/:id', authenticate, async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
+
+//Send Chatbot message
+app.post('/api/chat', async (req, res) => {
+  try {
+    const userMessage = req.body.message;
+    // Make sure to update this with the correct method to create chat completions according to OpenAI SDK version you are using
+    const response = await openai.chat.completions.create({
+      model: "text-embedding-3-small",
+      messages: [{ role: "user", content: userMessage }],
+    });
+    res.json({ message: response.data.choices[0].text.trim() });
+  } catch (error) {
+    console.error('Error processing chat message with OpenAI:', error);
+    if (error.response && error.response.status === 429) {
+      res.status(429).send('Too many requests, please try again later.');
+    } else {
+      res.status(500).send('Error processing your message.');
+    }
+  }
+});
+
+
+
 
 
   const PORT = process.env.PORT || 3000;

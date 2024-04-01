@@ -17,6 +17,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.5.0",
     "mongoose": "^8.2.2",
+    "openai": "^4.31.0",
     "sanitize-html": "^2.13.0"
   }
 }
