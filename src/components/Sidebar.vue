@@ -15,7 +15,7 @@
           <font-awesome-icon icon="list" size="2x" />
           <p>To-Do</p>
         </button>
-        <button>
+        <button @click="togglePomodoro">
           <font-awesome-icon icon="clock" size="2x" />
           <p>Pomodoro</p>
         </button>
@@ -70,6 +70,9 @@ export default {
     },
     toggleChatBot() {
       this.$emit("toggle-chat-bot"); // Emit an event when the Chat-Bot button is clicked
+    },
+    togglePomodoro() {
+      this.$emit("toggle-pomodoro");
     },
   },
 };

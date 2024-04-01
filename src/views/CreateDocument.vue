@@ -131,7 +131,7 @@ export default {
   box-sizing: border-box;
 }
 body {
-  background-color: #f3f3f3;
+  background-color: #d9d9d987;
   margin: 0;
   overflow-y: auto; /* Ensure the body is scrollable */
 }
