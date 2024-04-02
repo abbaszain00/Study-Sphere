@@ -3,9 +3,11 @@
     <Sidebar
       @toggle-chat-bot="toggleChatBot"
       @toggle-pomodoro="togglePomodoroTimer"
+      @toggle-to-do-list="toggleToDoList"
     />
 
     <Chatbot :isVisible="isChatBotVisible" />
+    <ToDoList :isVisible="isToDoListVisible" />
     <!-- Pomodoro Timer component with conditional rendering -->
     <PomodoroTimer :isVisible="isPomodoroVisible" />
     <router-link to="/dashboard" class="dash-logo">
@@ -18,6 +20,7 @@
 import Sidebar from "./Sidebar.vue";
 import Chatbot from "./Chatbot.vue";
 import PomodoroTimer from "./PomodoroTimer.vue"; // Ensure correct spelling
+import ToDoList from "./ToDoList.vue";
 
 export default {
   name: "Top",
@@ -25,11 +28,13 @@ export default {
     Sidebar,
     Chatbot,
     PomodoroTimer,
+    ToDoList,
   },
   data() {
     return {
       isChatBotVisible: false,
       isPomodoroVisible: false, // Added visibility control for PomodoroTimer
+      isToDoListVisible: false,
     };
   },
   methods: {
@@ -38,6 +43,9 @@ export default {
     },
     togglePomodoroTimer() {
       this.isPomodoroVisible = !this.isPomodoroVisible; // Toggle visibility of PomodoroTimer
+    },
+    toggleToDoList() {
+      this.isToDoListVisible = !this.isToDoListVisible; // Toggle visibility of PomodoroTimer
     },
   },
 };

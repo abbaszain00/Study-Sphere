@@ -11,7 +11,7 @@
         <button @click="closeSidebar">
           <font-awesome-icon icon="arrow-left" size="2x" />
         </button>
-        <button>
+        <button @click="toggleToDoList">
           <font-awesome-icon icon="list" size="2x" />
           <p>To-Do</p>
         </button>
@@ -73,6 +73,9 @@ export default {
     },
     togglePomodoro() {
       this.$emit("toggle-pomodoro");
+    },
+    toggleToDoList() {
+      this.$emit("toggle-to-do-list");
     },
   },
 };
