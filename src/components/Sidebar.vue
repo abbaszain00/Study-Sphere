@@ -19,7 +19,7 @@
           <font-awesome-icon icon="clock" size="2x" />
           <p>Pomodoro</p>
         </button>
-        <button>
+        <button @click="toggleSoundMenu">
           <font-awesome-icon icon="music" size="2x" />
           <p>Sounds</p>
         </button>
@@ -76,6 +76,9 @@ export default {
     },
     toggleToDoList() {
       this.$emit("toggle-to-do-list");
+    },
+    toggleSoundMenu() {
+      this.$emit("toggle-sound");
     },
   },
 };

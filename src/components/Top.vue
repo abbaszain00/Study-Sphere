@@ -4,7 +4,9 @@
       @toggle-chat-bot="toggleChatBot"
       @toggle-pomodoro="togglePomodoroTimer"
       @toggle-to-do-list="toggleToDoList"
+      @toggle-sound="toggleSoundMenu"
     />
+    <SoundMenu :isVisible="isSoundMenuVisible" />
 
     <Chatbot :isVisible="isChatBotVisible" />
     <ToDoList :isVisible="isToDoListVisible" />
@@ -21,6 +23,7 @@ import Sidebar from "./Sidebar.vue";
 import Chatbot from "./Chatbot.vue";
 import PomodoroTimer from "./PomodoroTimer.vue"; // Ensure correct spelling
 import ToDoList from "./ToDoList.vue";
+import SoundMenu from "./SoundMenu.vue";
 
 export default {
   name: "Top",
@@ -29,12 +32,14 @@ export default {
     Chatbot,
     PomodoroTimer,
     ToDoList,
+    SoundMenu,
   },
   data() {
     return {
       isChatBotVisible: false,
       isPomodoroVisible: false, // Added visibility control for PomodoroTimer
       isToDoListVisible: false,
+      isSoundMenuVisible: false,
     };
   },
   methods: {
@@ -46,6 +51,9 @@ export default {
     },
     toggleToDoList() {
       this.isToDoListVisible = !this.isToDoListVisible; // Toggle visibility of PomodoroTimer
+    },
+    toggleSoundMenu() {
+      this.isSoundMenuVisible = !this.isSoundMenuVisible;
     },
   },
 };

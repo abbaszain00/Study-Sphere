@@ -1,6 +1,5 @@
 <template>
   <div v-if="isVisible" class="todo-container">
-    <!-- Draggable Header -->
     <div
       class="todo-header"
       @mousedown="dragStart"
@@ -9,7 +8,6 @@
     >
       To-Do List
     </div>
-
     <div class="todo-body">
       <input
         type="text"
@@ -17,41 +15,60 @@
         @keyup.enter="addTask"
         placeholder="Add a new task..."
       />
-      <div class="task" v-for="(task, index) in tasks" :key="index">
-        <input type="checkbox" v-model="task.done" />
-        <span :class="{ done: task.done }">{{ task.text }}</span>
-      </div>
+      <transition-group name="fade" tag="div" class="task-list">
+        <div class="task" v-for="(task, index) in tasks" :key="task.id">
+          <input
+            type="checkbox"
+            v-model="task.done"
+            @change="() => prepareToRemoveTask(task.id)"
+          />
+          <span :class="{ 'task-done': task.done }">{{ task.text }}</span>
+        </div>
+      </transition-group>
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
+
 export default {
   data() {
     return {
       newTask: "",
-      tasks: [],
       isVisible: false,
       isDragging: false,
       dragStartX: 0,
       dragStartY: 0,
     };
   },
+  computed: {
+    ...mapState(["tasks"]),
+  },
   methods: {
+    ...mapActions(["addNewTask", "removeTaskById", "toggleTaskDone"]),
     addTask() {
       if (this.newTask.trim()) {
-        this.tasks.push({ text: this.newTask, done: false });
+        this.addNewTask({ id: Date.now(), text: this.newTask, done: false });
         this.newTask = "";
       }
+    },
+    prepareToRemoveTask(taskId) {
+      // Start the CSS transition
+      this.toggleTaskDone(taskId); // Assuming toggleTaskDone now accepts taskId
+
+      // Wait for the animation to complete before actually removing the task
+      setTimeout(() => {
+        this.removeTaskById(taskId);
+      }, 500); // Match this duration to your CSS transition time
     },
     toggleVisibility() {
       this.isVisible = !this.isVisible;
     },
     dragStart(event) {
       this.isDragging = true;
-      const chatbox = this.$el; // This should reference the chatbot container now
-      this.dragStartX = event.clientX - chatbox.offsetLeft;
-      this.dragStartY = event.clientY - chatbox.offsetTop;
+      this.dragStartX = event.clientX - this.$el.offsetLeft;
+      this.dragStartY = event.clientY - this.$el.offsetTop;
     },
     dragging(event) {
       if (this.isDragging) {
@@ -93,14 +110,24 @@ export default {
 .todo-body {
   padding: 10px;
 }
-
-.task {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
+.task-list {
+  transition: all 0.5s ease;
 }
 
-.task .done {
+.task-done {
   text-decoration: line-through;
+  color: #bbb;
+  transition: color 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter,
+.fade-leave-to /* <= For Vue 2.1.8+ */ {
+  opacity: 0;
+  max-height: 0;
 }
 </style>
