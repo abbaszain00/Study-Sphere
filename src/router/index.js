@@ -5,6 +5,7 @@ import ContactView from '@/views/ContactView.vue';
 import FaqView from '@/views/FaqView.vue';
 import SignIn from '@/views/SignIn.vue';
 import Dashboard from '@/views/Dashboard.vue';
+import VideoView from '@/views/VideoView.vue';
 
 // Define routes, marking public ones with a meta field
 const routes = [
@@ -54,6 +55,12 @@ const routes = [
     path: '/edit/:id',
     name: 'EditDocument',
     component: () => import('@/views/EditDocument.vue'), 
+    meta: { public: false },
+  },
+  {
+    path: '/videos',
+    name: 'videos',
+    component: VideoView, 
     meta: { public: false },
   },
 ];

@@ -23,6 +23,10 @@
           <font-awesome-icon icon="music" size="2x" />
           <p>Sounds</p>
         </button>
+        <button @click="goToVideosPage">
+          <font-awesome-icon icon="image" size="2x" />
+          <p>Videos</p>
+        </button>
         <button @click="toggleChatBotVisibility">
           <font-awesome-icon icon="comment" size="2x" />
           <p>Chat-Bot</p>
@@ -72,6 +76,9 @@ export default {
       localStorage.removeItem("token");
       axios.defaults.headers.common["Authorization"] = "";
       this.$router.push("/Signin");
+    },
+    goToVideosPage() {
+      this.$router.push("/Videos");
     },
   },
 };
