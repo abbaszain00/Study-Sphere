@@ -10,7 +10,17 @@ export default createStore({
     isSidebarOpen: false, // Sidebar open/close state
     isToDoListVisible: false,
     isPomodoroTimerVisible: false, // Corrected state name
+    timerRunning: false,
+    timerSecondsLeft: 25 * 60, // Default Pomodoro duration
+    timerStartTimestamp: null,
+    currentMode: 'work', // 'work', 'shortBreak', 'longBreak'
+    timerIntervalID: null, // To store the interval ID
+    modeDurations: {
+      work: 25 * 60,
+      shortBreak: 5 * 60,
+      longBreak: 15 * 60,
   },
+},
   mutations: {
     setDocuments(state, documents) {
       state.documents = documents;
@@ -50,6 +60,21 @@ export default createStore({
     },
     togglePomodoroTimerVisibility(state) { // Corrected mutation name to match state
       state.isPomodoroTimerVisible = !state.isPomodoroTimerVisible;
+    },
+    SET_TIMER_RUNNING(state, { running, startTimestamp }) {
+      state.timerRunning = running;
+      state.timerStartTimestamp = running ? startTimestamp : null;
+    },
+    SET_TIMER_SECONDS_LEFT(state, secondsLeft) {
+      state.timerSecondsLeft = secondsLeft;
+    },
+    SET_CURRENT_MODE(state, mode) {
+      state.currentMode = mode;
+      state.timerSecondsLeft = state.modeDurations[mode]; // Set initial time for mode
+
+    },
+    SET_TIMER_INTERVAL_ID(state, intervalId) {
+      state.timerIntervalID = intervalId;
     },
   },
   actions: {
@@ -95,11 +120,70 @@ export default createStore({
     toggleTaskDone({ commit }, taskId) {
       commit("TOGGLE_TASK_DONE", taskId);
     },
-    // Sidebar-related actions, if needed
-  },
+    startTimer({ commit, state, dispatch }) {
+      if (state.timerRunning) {
+        // If the timer is already running, return early to avoid multiple intervals
+        return;
+      }
+      commit('SET_TIMER_RUNNING', { running: true, startTimestamp: Date.now() });
+      
+      // Start an interval to decrement the timerSecondsLeft every second
+      const timerInterval = setInterval(() => {
+        const elapsedTimeInSeconds = Math.floor((Date.now() - state.timerStartTimestamp) / 1000);
+        const updatedSecondsLeft = state.modeDurations[state.currentMode] - elapsedTimeInSeconds;
+        
+        if (updatedSecondsLeft <= 0) {
+          // Time's up: stop the timer and clear the interval
+          dispatch('stopTimer');
+          commit('SET_TIMER_SECONDS_LEFT', 0); // Optionally reset to default or handle end of timer
+        } else {
+          // Timer still running: update the seconds left
+          commit('SET_TIMER_SECONDS_LEFT', updatedSecondsLeft);
+        }
+      }, 1000);
+  
+      // Store the interval ID in the state to clear it later
+      commit('SET_TIMER_INTERVAL_ID', timerInterval); // You'll need to add this mutation
+    },
+    updateTimerSecondsLeft({ commit }, secondsLeft) {
+      commit('SET_TIMER_SECONDS_LEFT', secondsLeft);
+    },
+    selectMode({ commit }, mode) {
+      commit('SET_CURRENT_MODE', mode);
+      // Consider stopping the timer without resetting time left if you want to change modes without auto-resetting
+    },
+    stopTimer({ commit, state }) {
+      clearInterval(state.timerIntervalID);
+      commit('SET_TIMER_RUNNING', { running: false, startTimestamp: null });
+      commit('SET_TIMER_INTERVAL_ID', null); // Clear the interval but keep the timerSecondsLeft as is for pause functionality
+    },
+    resetTimer({ commit, state }) {
+      commit('SET_TIMER_SECONDS_LEFT', state.modeDurations[state.currentMode]); // Reset to the mode's duration
+      commit('SET_TIMER_RUNNING', { running: false, startTimestamp: null });
+      if (state.timerIntervalID) {
+        clearInterval(state.timerIntervalID); // Clear any existing interval
+        commit('SET_TIMER_INTERVAL_ID', null);
+      }
+    },
+    // Correct `selectMode` action to reset the timer when changing modes
+    selectMode({ commit, state }, mode) {
+      commit('SET_CURRENT_MODE', mode);
+      const newSecondsLeft = state.modeDurations[mode];
+      commit('SET_TIMER_SECONDS_LEFT', newSecondsLeft);
+      commit('SET_TIMER_RUNNING', { running: false, startTimestamp: null });
+      if (state.timerIntervalID) {
+        clearInterval(state.timerIntervalID);
+        commit('SET_TIMER_INTERVAL_ID', null);
+      }
+    },
+    },
   plugins: [
     createPersistedState({
-      paths: ['isSidebarOpen', 'isToDoListVisible', 'isPomodoroTimerVisible'], // Corrected path
+      paths: ['isSidebarOpen', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
     }),
   ],
+  
 });
+
+
+

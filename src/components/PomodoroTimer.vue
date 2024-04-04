@@ -1,6 +1,5 @@
 <template>
   <div v-if="isPomodoroTimerVisible" class="pomodoro-container">
-    <!-- Draggable Header -->
     <div
       class="pomodoro-header"
       @mousedown="dragStart"
@@ -9,21 +8,15 @@
     >
       Pomodoro Timer
     </div>
-
-    <!-- Tab Selection -->
     <div class="tabs">
       <button @click="selectMode('work')">Timer</button>
       <button @click="selectMode('shortBreak')">Short Break</button>
       <button @click="selectMode('longBreak')">Long Break</button>
     </div>
-
-    <!-- Timer Display -->
     <div class="timer-display">
       <h2>{{ currentModeFormatted }}</h2>
       <div>{{ displayTime }}</div>
     </div>
-
-    <!-- Timer Controls -->
     <div class="timer-controls">
       <button @click="startTimer">Start</button>
       <button @click="stopTimer">Stop</button>
@@ -36,25 +29,12 @@
 import { mapActions, mapState } from "vuex";
 
 export default {
-  data() {
-    return {
-      timer: null,
-      secondsLeft: 20 * 60, // Default to 20 minutes
-      modeDurations: {
-        work: 20 * 60,
-        shortBreak: 5 * 60,
-        longBreak: 15 * 60,
-      },
-      currentMode: "work",
-      isVisible: false,
-      isDragging: false,
-      dragStartX: 0,
-      dragStartY: 0,
-    };
-  },
   computed: {
-    ...mapState(["isPomodoroTimerVisible"]), // Use Vuex state for visibility
-
+    ...mapState({
+      isPomodoroTimerVisible: (state) => state.isPomodoroTimerVisible,
+      secondsLeft: (state) => state.timerSecondsLeft,
+      currentMode: (state) => state.currentMode,
+    }),
     displayTime() {
       const minutes = Math.floor(this.secondsLeft / 60);
       const seconds = this.secondsLeft % 60;
@@ -71,40 +51,23 @@ export default {
       }
     },
   },
-
   methods: {
-    startTimer() {
-      if (this.timer === null) {
-        this.timer = setInterval(() => {
-          if (this.secondsLeft > 0) {
-            this.secondsLeft--;
-          } else {
-            this.stopTimer(); // Automatically stop timer when time runs out
-          }
-        }, 1000);
-      }
-    },
-    stopTimer() {
-      clearInterval(this.timer);
-      this.timer = null;
-    },
+    ...mapActions([
+      "startTimer",
+      "stopTimer",
+      "selectMode", // Use selectMode action to also reset timer automatically when changing modes
+      "resetTimer", // Ensure this is correctly dispatched to reset the timer
+    ]),
     resetTimer() {
-      this.stopTimer();
-      this.secondsLeft = this.modeDurations[this.currentMode];
+      this.$store.dispatch("resetTimer"); // Assuming this action resets the timer to the mode's start duration
     },
     selectMode(mode) {
-      this.stopTimer(); // Stop any running timer
-      this.currentMode = mode;
-      this.secondsLeft = this.modeDurations[mode];
+      this.$store.dispatch("selectMode", mode); // Dispatch the selectMode action
     },
-    // toggleVisibility() {
-    //   this.isVisible = !this.isVisible;
-    // },
     dragStart(event) {
       this.isDragging = true;
-      const chatbox = this.$el; // This should reference the chatbot container now
-      this.dragStartX = event.clientX - chatbox.offsetLeft;
-      this.dragStartY = event.clientY - chatbox.offsetTop;
+      this.dragStartX = event.clientX - this.$el.offsetLeft;
+      this.dragStartY = event.clientY - this.$el.offsetTop;
     },
     dragging(event) {
       if (this.isDragging) {
