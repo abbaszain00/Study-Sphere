@@ -9,8 +9,9 @@ export default createStore({
     tasks: [],
     isSidebarOpen: false, // Sidebar open/close state
     isToDoListVisible: false,
-    isPomodoroTimerVisible: false, // Corrected state name
-    isChatBotVisible: false, // Corrected state name
+    isPomodoroTimerVisible: false, 
+    isChatBotVisible: false, 
+    isSoundMenuVisible: false, 
     timerRunning: false,
     timerSecondsLeft: 25 * 60, // Default Pomodoro duration
     timerStartTimestamp: null,
@@ -64,6 +65,9 @@ export default createStore({
     },   
     toggleChatBotVisibility(state) { 
       state.isChatBotVisible = !state.isChatBotVisible;
+    },
+    toggleSoundMenuVisibility(state) { 
+      state.isSoundMenuVisible = !state.isSoundMenuVisible;
     },
     SET_TIMER_RUNNING(state, { running, startTimestamp }) {
       state.timerRunning = running;
@@ -183,7 +187,7 @@ export default createStore({
     },
   plugins: [
     createPersistedState({
-      paths: ['isSidebarOpen','isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
+      paths: ['isSidebarOpen','isSoundMenuVisible','isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
     }),
   ],
   

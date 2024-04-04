@@ -19,7 +19,7 @@
           <font-awesome-icon icon="clock" size="2x" />
           <p>Pomodoro</p>
         </button>
-        <button @click="toggleSoundMenu">
+        <button @click="toggleSoundMenuVisibility">
           <font-awesome-icon icon="music" size="2x" />
           <p>Sounds</p>
         </button>
@@ -62,7 +62,8 @@ export default {
       "setSidebar",
       "toggleToDoListVisibility", // Assuming you have this mutation
       "togglePomodoroTimerVisibility",
-      "toggleChatBotVisibility", // Assuming you have this mutation
+      "toggleChatBotVisibility",
+      "toggleSoundMenuVisibility",
     ]),
     closeSidebar() {
       this.setSidebar(false);

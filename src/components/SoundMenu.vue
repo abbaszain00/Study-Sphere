@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isVisible"
+    v-if="isSoundMenuVisible"
     class="sound-menu"
     @mousedown="dragStart"
     @mousemove="dragging"
@@ -17,10 +17,11 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
+
 export default {
   data() {
     return {
-      isVisible: false,
       isDragging: false,
       startX: 0,
       startY: 0,
@@ -35,6 +36,9 @@ export default {
       ],
       audioElements: {},
     };
+  },
+  computed: {
+    ...mapState(["isSoundMenuVisible"]),
   },
   methods: {
     toggleSound(url) {
@@ -74,9 +78,6 @@ export default {
   beforeDestroy() {
     // Pause all sounds and clean up before destroying the component
     Object.values(this.audioElements).forEach((audio) => audio.pause());
-  },
-  props: {
-    isVisible: Boolean,
   },
 };
 </script>
