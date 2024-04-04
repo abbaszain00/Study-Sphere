@@ -10,6 +10,7 @@ export default createStore({
     isSidebarOpen: false, // Sidebar open/close state
     isToDoListVisible: false,
     isPomodoroTimerVisible: false, // Corrected state name
+    isChatBotVisible: false, // Corrected state name
     timerRunning: false,
     timerSecondsLeft: 25 * 60, // Default Pomodoro duration
     timerStartTimestamp: null,
@@ -60,6 +61,9 @@ export default createStore({
     },
     togglePomodoroTimerVisibility(state) { // Corrected mutation name to match state
       state.isPomodoroTimerVisible = !state.isPomodoroTimerVisible;
+    },   
+    toggleChatBotVisibility(state) { 
+      state.isChatBotVisible = !state.isChatBotVisible;
     },
     SET_TIMER_RUNNING(state, { running, startTimestamp }) {
       state.timerRunning = running;
@@ -179,7 +183,7 @@ export default createStore({
     },
   plugins: [
     createPersistedState({
-      paths: ['isSidebarOpen', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
+      paths: ['isSidebarOpen','isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
     }),
   ],
   

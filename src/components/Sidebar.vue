@@ -23,7 +23,7 @@
           <font-awesome-icon icon="music" size="2x" />
           <p>Sounds</p>
         </button>
-        <button @click="toggleChatBot">
+        <button @click="toggleChatBotVisibility">
           <font-awesome-icon icon="comment" size="2x" />
           <p>Chat-Bot</p>
         </button>
@@ -61,8 +61,8 @@ export default {
       "toggleSidebar",
       "setSidebar",
       "toggleToDoListVisibility", // Assuming you have this mutation
-      "togglePomodoroTimerVisibility", // Assuming you have this mutation
-      // Add similar mutations for other features as needed
+      "togglePomodoroTimerVisibility",
+      "toggleChatBotVisibility", // Assuming you have this mutation
     ]),
     closeSidebar() {
       this.setSidebar(false);

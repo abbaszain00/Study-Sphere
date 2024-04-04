@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isVisible" class="chatbot-container">
+  <div v-if="isChatBotVisible" class="chatbot-container">
     <div
       class="chat-header"
       @mousedown="dragStart"
@@ -34,7 +34,6 @@ import { mapActions, mapState } from "vuex";
 export default {
   data() {
     return {
-      isVisible: false,
       userInput: "",
       isDragging: false,
       dragStartX: 0,
@@ -42,7 +41,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["chatMessages"]),
+    ...mapState(["chatMessages", "isChatBotVisible"]),
   },
   methods: {
     ...mapActions(["addChatMessage"]),
@@ -82,9 +81,6 @@ export default {
     dragEnd() {
       this.isDragging = false;
     },
-  },
-  props: {
-    isVisible: Boolean,
   },
 };
 </script>
