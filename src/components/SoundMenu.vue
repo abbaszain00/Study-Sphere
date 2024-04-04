@@ -10,7 +10,7 @@
     <div class="sound-header">Nature Sounds</div>
     <ul class="sound-list">
       <li v-for="(sound, index) in sounds" :key="index">
-        <button @click="toggleSound(sound.url)">{{ sound.name }}</button>
+        <button @click="toggleSound(sound.name)">{{ sound.name }}</button>
       </li>
     </ul>
   </div>
@@ -18,6 +18,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import rainSound from "@/assets/sounds/rain.mp3";
 
 export default {
   data() {
@@ -25,15 +26,7 @@ export default {
       isDragging: false,
       startX: 0,
       startY: 0,
-      sounds: [
-        {
-          name: "Rain",
-          url: "@/assets/sounds/rain.mp3",
-        },
-        { name: "Ocean", url: "path/to/ocean.mp3" },
-        { name: "Forest", url: "path/to/forest.mp3" },
-        // Add more sounds as needed
-      ],
+      sounds: [{ name: "Rain", url: rainSound }],
       audioElements: {},
     };
   },
@@ -41,20 +34,24 @@ export default {
     ...mapState(["isSoundMenuVisible"]),
   },
   methods: {
-    toggleSound(url) {
+    toggleSound(soundName) {
+      const sound = this.sounds.find((s) => s.name === soundName);
+      if (!sound) return;
+
       // Initialize audio element if it doesn't exist
-      if (!this.audioElements[url]) {
-        const audio = new Audio(url);
+      if (!this.audioElements[soundName]) {
+        const audio = new Audio(sound.url);
         audio.loop = true; // Ensure the sound loops
-        this.audioElements[url] = audio;
+        this.audioElements[soundName] = audio;
       }
 
-      // Play or pause the audio based on its current state
-      const sound = this.audioElements[url];
-      if (sound.paused) {
-        sound.play();
+      const audioElement = this.audioElements[soundName];
+      if (audioElement.paused) {
+        audioElement
+          .play()
+          .catch((err) => console.error("Error playing sound:", err));
       } else {
-        sound.pause();
+        audioElement.pause();
       }
     },
     dragStart(event) {
@@ -70,9 +67,6 @@ export default {
     },
     dragEnd() {
       this.isDragging = false;
-    },
-    toggleVisibility() {
-      this.isVisible = !this.isVisible;
     },
   },
   beforeDestroy() {
