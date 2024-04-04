@@ -48,20 +48,16 @@
 </template>
 
 <script>
-import axios from "axios";
+import { mapState, mapMutations } from "vuex";
 
 export default {
-  data() {
-    return {
-      isSidebarOpen: false,
-    };
+  computed: {
+    ...mapState(["isSidebarOpen"]),
   },
   methods: {
-    toggleSidebar() {
-      this.isSidebarOpen = !this.isSidebarOpen;
-    },
+    ...mapMutations(["toggleSidebar", "setSidebar"]),
     closeSidebar() {
-      this.isSidebarOpen = false;
+      this.setSidebar(false);
     },
     logoutUser() {
       localStorage.removeItem("token"); // Clear the stored token
@@ -83,7 +79,6 @@ export default {
   },
 };
 </script>
-
 <style>
 /* Basic styling */
 /* Updated styling */

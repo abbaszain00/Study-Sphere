@@ -1,12 +1,13 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
-import createPersistedState from 'vuex-persistedstate'; // Import the plugin
+import createPersistedState from 'vuex-persistedstate';
 
 export default createStore({
   state: {
-    documents: [], // Initial state for documents
-    chatMessages: [], // Initial state for chat messages
-    tasks: [], // Initial state for tasks
+    documents: [],
+    chatMessages: [],
+    tasks: [],
+    isSidebarOpen: false, // Sidebar open/close state
   },
   mutations: {
     setDocuments(state, documents) {
@@ -28,14 +29,21 @@ export default createStore({
       state.tasks.push(task);
     },
     REMOVE_TASK(state, taskId) {
-      state.tasks = state.tasks.filter((task) => task.id !== taskId);
+      state.tasks = state.tasks.filter(task => task.id !== taskId);
     },
     TOGGLE_TASK_DONE(state, taskId) {
-      const task = state.tasks.find((task) => task.id === taskId);
+      const task = state.tasks.find(task => task.id === taskId);
       if (task) {
         task.done = !task.done;
       }
     },
+    toggleSidebar(state) {
+      state.isSidebarOpen = !state.isSidebarOpen;
+    },
+    // Corrected mutation
+    setSidebar(state, status) {
+      state.isSidebarOpen = status;
+    }
   },
   actions: {
     deleteDocumentById({ commit }, documentId) {
@@ -80,6 +88,11 @@ export default createStore({
     toggleTaskDone({ commit }, taskId) {
       commit("TOGGLE_TASK_DONE", taskId);
     },
+    // Sidebar-related actions, if needed
   },
-  plugins: [createPersistedState()],
+  plugins: [
+    createPersistedState({
+      paths: ['isSidebarOpen'], // Ensure only specific paths are persisted
+    }),
+  ],
 });
