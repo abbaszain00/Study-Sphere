@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isVisible" class="pomodoro-container">
+  <div v-if="isPomodoroTimerVisible" class="pomodoro-container">
     <!-- Draggable Header -->
     <div
       class="pomodoro-header"
@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
+
 export default {
   data() {
     return {
@@ -51,6 +53,8 @@ export default {
     };
   },
   computed: {
+    ...mapState(["isPomodoroTimerVisible"]), // Use Vuex state for visibility
+
     displayTime() {
       const minutes = Math.floor(this.secondsLeft / 60);
       const seconds = this.secondsLeft % 60;
@@ -67,6 +71,7 @@ export default {
       }
     },
   },
+
   methods: {
     startTimer() {
       if (this.timer === null) {
@@ -92,9 +97,9 @@ export default {
       this.currentMode = mode;
       this.secondsLeft = this.modeDurations[mode];
     },
-    toggleVisibility() {
-      this.isVisible = !this.isVisible;
-    },
+    // toggleVisibility() {
+    //   this.isVisible = !this.isVisible;
+    // },
     dragStart(event) {
       this.isDragging = true;
       const chatbox = this.$el; // This should reference the chatbot container now
@@ -110,9 +115,6 @@ export default {
     dragEnd() {
       this.isDragging = false;
     },
-  },
-  props: {
-    isVisible: Boolean,
   },
 };
 </script>

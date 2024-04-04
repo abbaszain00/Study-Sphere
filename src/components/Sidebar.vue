@@ -11,11 +11,11 @@
         <button @click="closeSidebar">
           <font-awesome-icon icon="arrow-left" size="2x" />
         </button>
-        <button @click="toggleToDoList">
+        <button @click="toggleToDoListVisibility">
           <font-awesome-icon icon="list" size="2x" />
           <p>To-Do</p>
         </button>
-        <button @click="togglePomodoro">
+        <button @click="togglePomodoroTimerVisibility">
           <font-awesome-icon icon="clock" size="2x" />
           <p>Pomodoro</p>
         </button>
@@ -49,36 +49,32 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import ToDoList from "./ToDoList.vue";
 
 export default {
   computed: {
     ...mapState(["isSidebarOpen"]),
   },
   methods: {
-    ...mapMutations(["toggleSidebar", "setSidebar"]),
+    ...mapMutations([
+      "toggleSidebar",
+      "setSidebar",
+      "toggleToDoListVisibility", // Assuming you have this mutation
+      "togglePomodoroTimerVisibility", // Assuming you have this mutation
+      // Add similar mutations for other features as needed
+    ]),
     closeSidebar() {
       this.setSidebar(false);
     },
     logoutUser() {
-      localStorage.removeItem("token"); // Clear the stored token
-      axios.defaults.headers.common["Authorization"] = ""; // Remove the token from future requests
-      this.$router.push("/Signin"); // Redirect to the login page
-    },
-    toggleChatBot() {
-      this.$emit("toggle-chat-bot"); // Emit an event when the Chat-Bot button is clicked
-    },
-    togglePomodoro() {
-      this.$emit("toggle-pomodoro");
-    },
-    toggleToDoList() {
-      this.$emit("toggle-to-do-list");
-    },
-    toggleSoundMenu() {
-      this.$emit("toggle-sound");
+      localStorage.removeItem("token");
+      axios.defaults.headers.common["Authorization"] = "";
+      this.$router.push("/Signin");
     },
   },
 };
 </script>
+
 <style>
 /* Basic styling */
 /* Updated styling */

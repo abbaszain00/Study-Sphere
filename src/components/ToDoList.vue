@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isVisible" class="todo-container">
+  <div v-if="isToDoListVisible" class="todo-container">
     <div
       class="todo-header"
       @mousedown="dragStart"
@@ -36,14 +36,13 @@ export default {
   data() {
     return {
       newTask: "",
-      isVisible: false,
       isDragging: false,
       dragStartX: 0,
       dragStartY: 0,
     };
   },
   computed: {
-    ...mapState(["tasks"]),
+    ...mapState(["tasks", "isToDoListVisible"]), // Use Vuex state for visibility
   },
   methods: {
     ...mapActions(["addNewTask", "removeTaskById", "toggleTaskDone"]),
@@ -54,16 +53,8 @@ export default {
       }
     },
     prepareToRemoveTask(taskId) {
-      // Start the CSS transition
-      this.toggleTaskDone(taskId); // Assuming toggleTaskDone now accepts taskId
-
-      // Wait for the animation to complete before actually removing the task
-      setTimeout(() => {
-        this.removeTaskById(taskId);
-      }, 500); // Match this duration to your CSS transition time
-    },
-    toggleVisibility() {
-      this.isVisible = !this.isVisible;
+      this.toggleTaskDone(taskId);
+      setTimeout(() => this.removeTaskById(taskId), 500);
     },
     dragStart(event) {
       this.isDragging = true;
@@ -79,9 +70,6 @@ export default {
     dragEnd() {
       this.isDragging = false;
     },
-  },
-  props: {
-    isVisible: Boolean,
   },
 };
 </script>

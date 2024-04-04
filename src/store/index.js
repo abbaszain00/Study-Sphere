@@ -8,6 +8,8 @@ export default createStore({
     chatMessages: [],
     tasks: [],
     isSidebarOpen: false, // Sidebar open/close state
+    isToDoListVisible: false,
+    isPomodoroTimerVisible: false, // Corrected state name
   },
   mutations: {
     setDocuments(state, documents) {
@@ -40,10 +42,15 @@ export default createStore({
     toggleSidebar(state) {
       state.isSidebarOpen = !state.isSidebarOpen;
     },
-    // Corrected mutation
     setSidebar(state, status) {
       state.isSidebarOpen = status;
-    }
+    },
+    toggleToDoListVisibility(state) {
+      state.isToDoListVisible = !state.isToDoListVisible;
+    },
+    togglePomodoroTimerVisibility(state) { // Corrected mutation name to match state
+      state.isPomodoroTimerVisible = !state.isPomodoroTimerVisible;
+    },
   },
   actions: {
     deleteDocumentById({ commit }, documentId) {
@@ -92,7 +99,7 @@ export default createStore({
   },
   plugins: [
     createPersistedState({
-      paths: ['isSidebarOpen'], // Ensure only specific paths are persisted
+      paths: ['isSidebarOpen', 'isToDoListVisible', 'isPomodoroTimerVisible'], // Corrected path
     }),
   ],
 });
