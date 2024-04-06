@@ -98,25 +98,51 @@ export default {
   display: flex;
   flex-direction: column;
   z-index: 1000;
+  font-family: "Inter";
+  text-align: center;
 }
 
 .pomodoro-header {
   background-color: black;
   color: white;
   padding: 10px;
+  margin-bottom: 10px;
   cursor: move; /* Indicate the header is draggable */
 }
 
 .tabs button {
   margin: 0 5px;
+  font-family: "Inter";
+  cursor: pointer;
+  background-color: grey;
+}
+.tabs button:hover {
+  background-color: lightgrey;
+}
+.timer-display {
+  font-size: 40px;
+  font-weight: bold;
 }
 
 .timer-display h2 {
   margin: 10px 0;
+  font-size: 16px;
+  font-weight: lighter;
+  text-transform: uppercase;
 }
 
 .timer-controls button {
   margin: 5px;
+  font-family: "Inter";
+  border: none;
+  border-radius: 10px;
+  background-color: grey;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.timer-controls button:hover {
+  background-color: lightgray;
 }
 .minimize-button {
   background-color: transparent;
