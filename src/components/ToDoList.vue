@@ -130,6 +130,7 @@ export default {
   color: white;
   padding: 10px;
   cursor: move; /* Indicate the header is draggable */
+  text-align: center;
 }
 .todo-body {
   padding: 10px;

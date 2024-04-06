@@ -18,10 +18,12 @@ export default createStore({
     currentMode: 'work', // 'work', 'shortBreak', 'longBreak'
     timerIntervalID: null, // To store the interval ID
     modeDurations: {
-      work: 25 * 60,
+      work: 10,
       shortBreak: 5 * 60,
       longBreak: 15 * 60,
   },
+  timerFinished: false,
+
 },
   mutations: {
     setDocuments(state, documents) {
@@ -84,6 +86,9 @@ export default createStore({
     SET_TIMER_INTERVAL_ID(state, intervalId) {
       state.timerIntervalID = intervalId;
     },
+    SET_TIMER_FINISHED(state, finished) {
+      state.timerFinished = finished;
+    }
   },
   actions: {
     deleteDocumentById({ commit }, documentId) {
@@ -141,11 +146,11 @@ export default createStore({
         const updatedSecondsLeft = state.modeDurations[state.currentMode] - elapsedTimeInSeconds;
         
         if (updatedSecondsLeft <= 0) {
-          // Time's up: stop the timer and clear the interval
           dispatch('stopTimer');
-          commit('SET_TIMER_SECONDS_LEFT', 0); // Optionally reset to default or handle end of timer
+          commit('SET_TIMER_SECONDS_LEFT', 0);
+          commit('SET_TIMER_FINISHED', true); // Indicate timer finished
+          // Show notification...
         } else {
-          // Timer still running: update the seconds left
           commit('SET_TIMER_SECONDS_LEFT', updatedSecondsLeft);
         }
       }, 1000);
@@ -168,6 +173,8 @@ export default createStore({
     resetTimer({ commit, state }) {
       commit('SET_TIMER_SECONDS_LEFT', state.modeDurations[state.currentMode]); // Reset to the mode's duration
       commit('SET_TIMER_RUNNING', { running: false, startTimestamp: null });
+      commit('SET_TIMER_FINISHED', false); // Add this line to reset the finished state
+
       if (state.timerIntervalID) {
         clearInterval(state.timerIntervalID); // Clear any existing interval
         commit('SET_TIMER_INTERVAL_ID', null);

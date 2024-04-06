@@ -16,7 +16,7 @@
       <button @click="selectMode('shortBreak')">Short Break</button>
       <button @click="selectMode('longBreak')">Long Break</button>
     </div>
-    <div class="timer-display">
+    <div class="timer-display" :class="{ 'timer-finished': timerFinished }">
       <h2>{{ currentModeFormatted }}</h2>
       <div>{{ displayTime }}</div>
     </div>
@@ -38,6 +38,9 @@ export default {
       secondsLeft: (state) => state.timerSecondsLeft,
       currentMode: (state) => state.currentMode,
     }),
+    timerFinished() {
+      return this.$store.state.timerFinished;
+    },
     displayTime() {
       const minutes = Math.floor(this.secondsLeft / 60);
       const seconds = this.secondsLeft % 60;
@@ -51,6 +54,23 @@ export default {
           return "Short Break";
         case "longBreak":
           return "Long Break";
+      }
+    },
+  },
+  watch: {
+    timerFinished(newVal) {
+      if (newVal) {
+        if (Notification.permission === "granted") {
+          new Notification("Timer Done!");
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              new Notification("Timer Done!");
+            }
+          });
+        } else {
+          alert("Timer Done!");
+        }
       }
     },
   },
@@ -115,6 +135,7 @@ export default {
   font-family: "Inter";
   cursor: pointer;
   background-color: grey;
+  font-weight: bold;
 }
 .tabs button:hover {
   background-color: lightgrey;
@@ -134,11 +155,12 @@ export default {
 .timer-controls button {
   margin: 5px;
   font-family: "Inter";
-  border: none;
+  /* border: none; */
   border-radius: 10px;
   background-color: grey;
   padding: 5px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .timer-controls button:hover {
@@ -153,5 +175,17 @@ export default {
   position: absolute;
   right: 10px;
   top: 0px;
+}
+.timer-finished {
+  animation: flashRed 1s infinite; /* Adjust the duration and iteration count as desired */
+}
+@keyframes flashRed {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: red;
+  }
 }
 </style>
