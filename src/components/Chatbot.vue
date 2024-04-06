@@ -6,7 +6,10 @@
       @mousemove="dragging"
       @mouseup="dragEnd"
     >
-      ChatGPT
+      AI Chatbot
+      <button class="minimize-button" @click="toggleChatBotVisibility">
+        -
+      </button>
     </div>
     <div class="chat-messages">
       <div
@@ -29,7 +32,7 @@
 
 <script>
 import axios from "axios";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -44,6 +47,8 @@ export default {
     ...mapState(["chatMessages", "isChatBotVisible"]),
   },
   methods: {
+    ...mapMutations(["toggleChatBotVisibility"]),
+
     ...mapActions(["addChatMessage"]),
     async sendMessage() {
       if (this.userInput.trim()) {
@@ -98,6 +103,7 @@ export default {
   display: flex;
   flex-direction: column;
   z-index: 1000;
+  font-family: "Inter";
 }
 
 .chat-header {
@@ -105,6 +111,7 @@ export default {
   color: white;
   padding: 10px;
   cursor: move; /* Indicate the header is draggable */
+  text-align: center;
 }
 
 .chat-messages {
@@ -134,5 +141,15 @@ input[type="text"] {
   border: none;
   padding: 10px;
   width: calc(100% - 20px);
+}
+.minimize-button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 30px;
+  position: absolute;
+  right: 10px;
+  top: 0px;
 }
 </style>

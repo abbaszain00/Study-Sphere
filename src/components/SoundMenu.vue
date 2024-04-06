@@ -7,7 +7,12 @@
     @mouseup="dragEnd"
     @mouseleave="dragEnd"
   >
-    <div class="sound-header">Nature Sounds</div>
+    <div class="sound-header">
+      Nature Sounds
+      <button class="minimize-button" @click="toggleSoundMenuVisibility">
+        -
+      </button>
+    </div>
     <ul class="sound-list">
       <li v-for="(sound, index) in sounds" :key="index">
         <button @click="toggleSound(sound.name)">{{ sound.name }}</button>
@@ -17,7 +22,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 import rainSound from "@/assets/sounds/rain.mp3";
 
 export default {
@@ -34,6 +39,7 @@ export default {
     ...mapState(["isSoundMenuVisible"]),
   },
   methods: {
+    ...mapMutations(["toggleSoundMenuVisibility"]),
     toggleSound(soundName) {
       const sound = this.sounds.find((s) => s.name === soundName);
       if (!sound) return;
@@ -78,20 +84,23 @@ export default {
 
 <style>
 .sound-menu {
+  right: 20px;
   position: fixed;
   width: 250px;
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  cursor: grab; /* Indicates the component can be dragged */
+  font-family: "Inter";
 }
 
 .sound-header {
-  background: #f7f7f7;
+  background-color: black;
+  color: white;
   padding: 10px;
-  border-bottom: 1px solid #eee;
-  cursor: grabbing; /* Changes cursor style during dragging */
+  cursor: move; /* Indicate the header is draggable */
+  text-align: center;
+  font-family: "Inter";
 }
 
 .sound-list {
@@ -99,7 +108,22 @@ export default {
   padding: 10px;
 }
 
+.sound-list button {
+  font-family: "Inter";
+}
+
 .sound-list li {
   margin-bottom: 10px;
+}
+
+.minimize-button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 30px;
+  position: absolute;
+  right: 10px;
+  top: 0px;
 }
 </style>
