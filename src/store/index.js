@@ -187,7 +187,7 @@ export default createStore({
     },
   plugins: [
     createPersistedState({
-      paths: ['isSidebarOpen','isSoundMenuVisible','isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
+      paths: ['tasks', 'isSidebarOpen','isSoundMenuVisible','isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
     }),
   ],
   

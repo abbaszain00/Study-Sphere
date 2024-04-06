@@ -7,6 +7,9 @@
       @mouseup="dragEnd"
     >
       To-Do List
+      <button class="minimize-button" @click="toggleToDoListVisibility">
+        -
+      </button>
     </div>
     <div class="todo-body">
       <input
@@ -15,22 +18,42 @@
         @keyup.enter="addTask"
         placeholder="Add a new task..."
       />
-      <transition-group name="fade" tag="div" class="task-list">
-        <div class="task" v-for="(task, index) in tasks" :key="task.id">
+      <div class="task-list">
+        <div
+          v-for="(task, index) in tasks"
+          :key="task.id"
+          :class="{ 'task-done': task.done }"
+          class="task"
+        >
           <input
             type="checkbox"
             v-model="task.done"
             @change="() => prepareToRemoveTask(task.id)"
           />
-          <span :class="{ 'task-done': task.done }">{{ task.text }}</span>
+          <template v-if="task.isEditing">
+            <input
+              v-model="task.text"
+              @blur="disableEditing(task)"
+              @keyup.enter="disableEditing(task)"
+              class="task-edit-input"
+              autofocus
+            />
+          </template>
+          <template v-else>
+            <span
+              @dblclick="enableEditing(task)"
+              :class="{ 'task-done': task.done }"
+              >{{ task.text }}</span
+            >
+          </template>
         </div>
-      </transition-group>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -42,19 +65,32 @@ export default {
     };
   },
   computed: {
-    ...mapState(["tasks", "isToDoListVisible"]), // Use Vuex state for visibility
+    ...mapState(["tasks", "isToDoListVisible"]),
   },
   methods: {
+    ...mapMutations(["toggleToDoListVisibility"]),
     ...mapActions(["addNewTask", "removeTaskById", "toggleTaskDone"]),
     addTask() {
       if (this.newTask.trim()) {
-        this.addNewTask({ id: Date.now(), text: this.newTask, done: false });
+        this.addNewTask({
+          id: Date.now(),
+          text: this.newTask,
+          done: false,
+          isEditing: false,
+        });
         this.newTask = "";
       }
     },
+    enableEditing(task) {
+      task.isEditing = true;
+    },
+    disableEditing(task) {
+      task.isEditing = false;
+      // Optionally, dispatch an action to update the task in the store
+    },
     prepareToRemoveTask(taskId) {
       this.toggleTaskDone(taskId);
-      setTimeout(() => this.removeTaskById(taskId), 500);
+      setTimeout(() => this.removeTaskById(taskId));
     },
     dragStart(event) {
       this.isDragging = true;
@@ -73,7 +109,6 @@ export default {
   },
 };
 </script>
-
 <style>
 .todo-container {
   width: 400px;
@@ -87,6 +122,7 @@ export default {
   display: flex;
   flex-direction: column;
   z-index: 1000;
+  font-family: "Inter";
 }
 
 .todo-header {
@@ -97,25 +133,27 @@ export default {
 }
 .todo-body {
   padding: 10px;
+  overflow: auto;
 }
-.task-list {
-  transition: all 0.5s ease;
-}
-
-.task-done {
-  text-decoration: line-through;
-  color: #bbb;
-  transition: color 0.5s ease-out, opacity 0.5s ease-out;
+.todo-body input[type="text"] {
+  margin-bottom: 10px;
+  border: 2px solid black;
+  border-radius: 10px;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
+.minimize-button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 30px;
+  position: absolute;
+  right: 10px;
+  top: 0px;
 }
-
-.fade-enter,
-.fade-leave-to /* <= For Vue 2.1.8+ */ {
-  opacity: 0;
-  max-height: 0;
+.task-edit-input {
+  width: 90%;
+  box-sizing: border-box;
+  border: black 10px;
 }
 </style>

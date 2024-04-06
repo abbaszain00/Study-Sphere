@@ -7,6 +7,9 @@
       @mouseup="dragEnd"
     >
       Pomodoro Timer
+      <button class="minimize-button" @click="togglePomodoroTimerVisibility">
+        -
+      </button>
     </div>
     <div class="tabs">
       <button @click="selectMode('work')">Timer</button>
@@ -26,7 +29,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
   computed: {
@@ -52,6 +55,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(["togglePomodoroTimerVisibility"]),
     ...mapActions([
       "startTimer",
       "stopTimer",
@@ -113,5 +117,15 @@ export default {
 
 .timer-controls button {
   margin: 5px;
+}
+.minimize-button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 30px;
+  position: absolute;
+  right: 10px;
+  top: 0px;
 }
 </style>
