@@ -1,12 +1,16 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
 import createPersistedState from 'vuex-persistedstate';
+import rainSound from "@/assets/sounds/rain.mp3";
+import brownSound from "@/assets/sounds/brown.wav";
+import waveSound from "@/assets/sounds/waves.mp3";
 
 export default createStore({
   state: {
     documents: [],
     chatMessages: [],
     tasks: [],
+    playingSounds: {},
     isSidebarOpen: false, // Sidebar open/close state
     isToDoListVisible: false,
     isPomodoroTimerVisible: false, 
@@ -23,9 +27,41 @@ export default createStore({
       longBreak: 15 * 60,
   },
   timerFinished: false,
+  audioElements: {},
+  soundUrls: {
+    "Rain 🌧️": rainSound,
+    "Brown 🟫": brownSound,
+    "Waves 🌊": waveSound,
+  },
 
 },
   mutations: {
+    INITIALIZE_AUDIO(state, { name, url }) {
+      if (!state.audioElements[name]) {
+        const audio = new Audio(url);
+        audio.loop = true;
+        state.audioElements[name] = { audio, playing: false };
+      }
+    },
+    PLAY_SOUND(state, name) {
+      if (state.audioElements[name] && !state.audioElements[name].playing) {
+        state.audioElements[name].audio.play();
+        state.audioElements[name].playing = true;
+      }
+    },
+    PAUSE_SOUND(state, name) {
+      if (state.audioElements[name] && state.audioElements[name].playing) {
+        state.audioElements[name].audio.pause();
+        state.audioElements[name].playing = false;
+      }
+    },
+    SET_SOUND_PLAYING(state, { soundName, isPlaying }) {
+      if (isPlaying) {
+        state.playingSounds[soundName] = true;
+      } else {
+        delete state.playingSounds[soundName];
+      }
+    },
     setDocuments(state, documents) {
       state.documents = documents;
     },
@@ -91,6 +127,16 @@ export default createStore({
     }
   },
   actions: {
+    toggleSound({ commit, state }, name) {
+      if (state.audioElements[name] && state.audioElements[name].playing) {
+        commit('PAUSE_SOUND', name);
+      } else {
+        commit('PLAY_SOUND', name);
+      }
+    },
+    initializeSound({ commit }, payload) {
+      commit('INITIALIZE_AUDIO', payload);
+    },
     deleteDocumentById({ commit }, documentId) {
       const token = localStorage.getItem('token');
       axios.delete(`/api/documents/${documentId}`, {
@@ -192,13 +238,23 @@ export default createStore({
       }
     },
     },
-  plugins: [
-    createPersistedState({
-      paths: ['tasks', 'isSidebarOpen','isSoundMenuVisible','isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
-    }),
-  ],
-  
-});
-
+    plugins: [
+      createPersistedState({
+        paths: ['playingSounds', 'isSidebarOpen', 'isSoundMenuVisible', 'isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
+        rehydrated(store) {
+          Object.keys(store.state.playingSounds).forEach(name => {
+            const url = store.state.soundUrls[name];
+            if (url) {
+              store.dispatch('initializeSound', { name, url }).then(() => {
+                if (store.state.playingSounds[name]) {
+                  store.dispatch('toggleSound', name);
+                }
+              });
+            }
+          });
+        },
+      }),
+    ],
+  });
 
 

@@ -38,7 +38,6 @@ export default {
         { name: "Brown 🟫", url: brownSound },
         { name: "Waves 🌊", url: waveSound },
       ],
-      audioElements: {},
     };
   },
   computed: {
@@ -46,26 +45,7 @@ export default {
   },
   methods: {
     ...mapMutations(["toggleSoundMenuVisibility"]),
-    toggleSound(soundName) {
-      const sound = this.sounds.find((s) => s.name === soundName);
-      if (!sound) return;
-
-      // Initialize audio element if it doesn't exist
-      if (!this.audioElements[soundName]) {
-        const audio = new Audio(sound.url);
-        audio.loop = true; // Ensure the sound loops
-        this.audioElements[soundName] = audio;
-      }
-
-      const audioElement = this.audioElements[soundName];
-      if (audioElement.paused) {
-        audioElement
-          .play()
-          .catch((err) => console.error("Error playing sound:", err));
-      } else {
-        audioElement.pause();
-      }
-    },
+    ...mapActions(["toggleSound", "initializeSound"]),
     dragStart(event) {
       this.isDragging = true;
       this.startX = event.clientX - this.$el.offsetLeft;
@@ -81,9 +61,10 @@ export default {
       this.isDragging = false;
     },
   },
-  beforeDestroy() {
-    // Pause all sounds and clean up before destroying the component
-    Object.values(this.audioElements).forEach((audio) => audio.pause());
+  mounted() {
+    this.sounds.forEach((sound) => {
+      this.initializeSound({ name: sound.name, url: sound.url });
+    });
   },
 };
 </script>
