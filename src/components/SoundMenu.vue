@@ -1,13 +1,12 @@
 <template>
-  <div
-    v-if="isSoundMenuVisible"
-    class="sound-menu"
-    @mousedown="dragStart"
-    @mousemove="dragging"
-    @mouseup="dragEnd"
-    @mouseleave="dragEnd"
-  >
-    <div class="sound-header">
+  <div v-if="isSoundMenuVisible" class="sound-menu">
+    <div
+      class="sound-header"
+      @mousedown="dragStart"
+      @mousemove="dragging"
+      @mouseup="dragEnd"
+      @mouseleave="dragEnd"
+    >
       Nature Sounds
       <button class="minimize-button" @click="toggleSoundMenuVisibility">
         -
@@ -18,6 +17,9 @@
         <button @click="toggleSound(sound.name)">{{ sound.name }}</button>
       </li>
     </ul>
+    <div class="volume-control">
+      <input type="range" min="0" max="1" step="0.01" v-model="volumeLevel" />
+    </div>
   </div>
 </template>
 
@@ -30,6 +32,7 @@ import waveSound from "@/assets/sounds/waves.mp3";
 export default {
   data() {
     return {
+      volume: 1, // Default volume set to maximum (100%)
       isDragging: false,
       startX: 0,
       startY: 0,
@@ -42,10 +45,21 @@ export default {
   },
   computed: {
     ...mapState(["isSoundMenuVisible"]),
+    volumeLevel: {
+      get() {
+        return this.$store.state.volume;
+      },
+      set(value) {
+        this.$store.dispatch("setVolume", parseFloat(value));
+      },
+    },
   },
   methods: {
     ...mapMutations(["toggleSoundMenuVisibility"]),
     ...mapActions(["toggleSound", "initializeSound"]),
+    updateVolume() {
+      this.$store.dispatch("setVolume", this.volume);
+    },
     dragStart(event) {
       this.isDragging = true;
       this.startX = event.clientX - this.$el.offsetLeft;
@@ -95,6 +109,7 @@ export default {
   padding: 10px;
   display: flex;
   gap: 10px;
+  text-align: center;
 }
 
 .sound-list button {
@@ -122,5 +137,8 @@ export default {
   position: absolute;
   right: 10px;
   top: 0px;
+}
+.volume-control {
+  text-align: center;
 }
 </style>

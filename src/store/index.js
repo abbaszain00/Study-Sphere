@@ -34,6 +34,7 @@ export default createStore({
     "Waves 🌊": waveSound,
   },
   currentlyPlaying: null, // Track the name of the currently playing sound
+  volume: 1, // Default volume (100%)
 
 },
   mutations: {
@@ -41,6 +42,7 @@ export default createStore({
       if (!state.audioElements[name]) {
         const audio = new Audio(url);
         audio.loop = true;
+        audio.volume = state.volume; // Set the volume for the new audio element
         state.audioElements[name] = { audio, playing: false };
       }
     },
@@ -76,6 +78,13 @@ export default createStore({
       } else {
         delete state.playingSounds[soundName];
       }
+    },
+    SET_VOLUME(state, volume) {
+      state.volume = volume;
+      // Apply the volume to all initialized audio elements
+      Object.values(state.audioElements).forEach(({ audio }) => {
+        audio.volume = volume;
+      });
     },
     setDocuments(state, documents) {
       state.documents = documents;
@@ -142,6 +151,9 @@ export default createStore({
     }
   },
   actions: {
+    setVolume({ commit }, volume) {
+      commit("SET_VOLUME", volume);
+    },
     toggleSound({ commit, state }, name) {
       const sound = state.audioElements[name];
       if (sound && sound.playing) {
@@ -256,7 +268,7 @@ export default createStore({
     },
     plugins: [
       createPersistedState({
-        paths: ['playingSounds', 'isSidebarOpen', 'isSoundMenuVisible', 'isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
+        paths: ['playingSounds','volume', 'isSidebarOpen', 'isSoundMenuVisible', 'isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
         rehydrated(store) {
           Object.keys(store.state.playingSounds).forEach(name => {
             const url = store.state.soundUrls[name];
