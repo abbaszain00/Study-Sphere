@@ -2,7 +2,12 @@
   <div class="modal-overlay" @click.self="close">
     <div class="modal-content">
       <h2>Create New Document</h2>
-      <input type="text" v-model="documentName" placeholder="Document Name" />
+      <input
+        type="text"
+        v-model="documentName"
+        placeholder="Document Name"
+        required
+      />
       <button @click="save">Save</button>
       <button @click="close">Cancel</button>
     </div>
@@ -62,7 +67,7 @@ export default {
   cursor: pointer;
   border-radius: 5px;
   transition: 0.3s; /* Smooth transition for hover effect */
-  /* font-size: 24px; */
+  font-family: "Inter";
 }
 .modal-content button:hover {
   background-color: grey;
