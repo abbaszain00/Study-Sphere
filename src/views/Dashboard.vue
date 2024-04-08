@@ -3,6 +3,12 @@
     <Top />
   </div>
   <div class="dash-container">
+    <DocumentNameModal
+      v-if="isCreatingDocument"
+      @save="handleSave"
+      @close="handleClose"
+    />
+
     <div class="file-section">
       <button @click="createNewDocument">Create New Document</button>
       <button @click="toggleEditMode">Edit</button>
@@ -45,15 +51,19 @@
 </template>
 
 <script>
+import DocumentNameModal from "@/components/DocumentNameModal.vue";
 import Top from "@/components/Top.vue";
 import { mapActions, mapState } from "vuex";
 import { isTokenValid } from "@/utils/util"; // Adjust the path as necessary
+
 export default {
   components: {
     Top,
+    DocumentNameModal,
   },
   data() {
     return {
+      isCreatingDocument: false,
       selectedDocuments: [],
       isEditing: false,
     };
@@ -62,29 +72,44 @@ export default {
     ...mapState(["documents"]),
   },
   methods: {
-    ...mapActions(["fetchDocuments", "deleteDocumentById"]),
+    ...mapActions(["fetchDocuments", "deleteDocumentById", "createDocument"]),
 
     redirectToSignIn() {
-      // Directly set the window location to the sign-in page's URL.
       window.location.href = "/signin";
     },
 
     async checkAndRedirect() {
-      // Assuming isTokenValid() is a synchronous function that checks the validity of the token
-      // You might need to make it asynchronous if it involves fetching from an API
       const isValid = isTokenValid();
       if (!isValid) {
         this.redirectToSignIn();
-        return false; // Token is not valid, prevent further actions
+        return false;
       }
-      return true; // Token is valid, proceed with the action
+      return true;
     },
 
-    async createNewDocument() {
-      const canProceed = await this.checkAndRedirect();
-      if (!canProceed) return;
-      // Proceed with document creation if the token is valid
-      this.$router.push({ name: "CreateDocument" });
+    createNewDocument() {
+      if (!this.checkAndRedirect()) return;
+      this.isCreatingDocument = true;
+    },
+
+    handleClose() {
+      this.isCreatingDocument = false;
+    },
+
+    handleSave(documentName) {
+      const documentData = {
+        title: documentName,
+        content: "", // Assuming empty content for now
+      };
+      this.createDocument(documentData)
+        .then(() => {
+          this.isCreatingDocument = false;
+          this.fetchDocuments(); // Refresh the documents list
+        })
+        .catch((error) => {
+          console.error("Failed to create document:", error);
+          alert("There was a problem creating your document.");
+        });
     },
 
     async openDocument(documentId) {
