@@ -48,7 +48,7 @@
 <script>
 import Top from "@/components/Top.vue";
 import { mapActions, mapState } from "vuex";
-
+import { isTokenValid } from "@/utils/util"; // Adjust the path as necessary
 export default {
   components: {
     Top,
@@ -64,21 +64,43 @@ export default {
   },
   methods: {
     ...mapActions(["fetchDocuments", "deleteDocumentById"]),
-    createNewDocument() {
+
+    redirectToSignIn() {
+      // Directly set the window location to the sign-in page's URL.
+      window.location.href = "/signin";
+    },
+
+    async checkAndRedirect() {
+      // Assuming isTokenValid() is a synchronous function that checks the validity of the token
+      // You might need to make it asynchronous if it involves fetching from an API
+      const isValid = isTokenValid();
+      if (!isValid) {
+        this.redirectToSignIn();
+        return false; // Token is not valid, prevent further actions
+      }
+      return true; // Token is valid, proceed with the action
+    },
+
+    async createNewDocument() {
+      const canProceed = await this.checkAndRedirect();
+      if (!canProceed) return;
+      // Proceed with document creation if the token is valid
       this.$router.push({ name: "CreateDocument" });
     },
-    openDocument(documentId, event) {
-      if (!this.isEditing) {
-        this.$router.push({ name: "EditDocument", params: { id: documentId } });
-      }
+
+    async openDocument(documentId) {
+      const canProceed = await this.checkAndRedirect();
+      if (!canProceed) return;
+      // Proceed with opening the document if the token is valid
+      this.$router.push({ name: "EditDocument", params: { id: documentId } });
     },
+
     deleteSelectedDocuments() {
       if (
         confirm(
           `Are you sure you want to delete ${this.selectedDocuments.length} documents?`
         )
       ) {
-        // Call deleteDocumentById for each selected document if it doesn't support array inputs
         Promise.all(
           this.selectedDocuments.map((id) => this.deleteDocumentById(id))
         )
@@ -92,9 +114,13 @@ export default {
           });
       }
     },
-    toggleEditMode() {
+    async toggleEditMode() {
+      const canProceed = await this.checkAndRedirect();
+      if (!canProceed) return;
+
       this.isEditing = !this.isEditing;
     },
+
     formatDate(value) {
       if (!value) return "";
       // You can adjust the formatting as per your requirements
