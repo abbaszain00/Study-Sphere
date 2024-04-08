@@ -24,7 +24,7 @@
           <tr
             v-for="document in documents"
             :key="document._id"
-            @click="openDocument(document._id, $event)"
+            @click="isEditing ? null : openDocument(document._id)"
           >
             <!-- Conditional checkbox column -->
             <td v-if="isEditing">
@@ -32,12 +32,11 @@
                 type="checkbox"
                 v-model="selectedDocuments"
                 :value="document._id"
+                @click.stop
               />
             </td>
             <td>{{ document.title }}</td>
             <td>{{ formatDate(document.updatedAt) }}</td>
-
-            <!-- Assuming you have a 'lastUpdated' field -->
           </tr>
         </tbody>
       </table>
