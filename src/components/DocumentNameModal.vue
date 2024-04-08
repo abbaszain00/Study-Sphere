@@ -46,5 +46,34 @@ export default {
   background: white;
   padding: 20px;
   border-radius: 5px;
+  text-align: center;
+  font-family: "Inter";
+}
+
+/* Add styles for buttons within modal-content */
+.modal-content button {
+  margin: 10px; /* Adjust as needed */
+  cursor: pointer;
+  background-color: black; /* Light gray background */
+  color: white; /* White text */
+  padding: 10px 20px; /* Increased padding to make the button bigger */
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s; /* Smooth transition for hover effect */
+  /* font-size: 24px; */
+}
+.modal-content button:hover {
+  background-color: grey;
+}
+
+/* Style for the input field to match your design preferences */
+.modal-content input[type="text"] {
+  margin: 8px 0;
+  background-color: #d9d9d9;
+  border-radius: 10px;
+  height: 50px;
+  font-family: "Inter";
 }
 </style>
