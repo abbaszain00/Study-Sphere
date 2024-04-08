@@ -24,6 +24,8 @@
 <script>
 import { mapActions, mapState, mapMutations } from "vuex";
 import rainSound from "@/assets/sounds/rain.mp3";
+import brownSound from "@/assets/sounds/brown.wav";
+import waveSound from "@/assets/sounds/waves.mp3";
 
 export default {
   data() {
@@ -31,7 +33,11 @@ export default {
       isDragging: false,
       startX: 0,
       startY: 0,
-      sounds: [{ name: "Rain", url: rainSound }],
+      sounds: [
+        { name: "Rain 🌧️", url: rainSound },
+        { name: "Brown 🟫", url: brownSound },
+        { name: "Waves 🌊", url: waveSound },
+      ],
       audioElements: {},
     };
   },
@@ -106,10 +112,20 @@ export default {
 .sound-list {
   list-style: none;
   padding: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .sound-list button {
   font-family: "Inter";
+  font-weight: bolder;
+  cursor: pointer;
+  background-color: grey;
+  border-radius: 15px;
+}
+
+.sound-list button:hover {
+  background-color: lightgray;
 }
 
 .sound-list li {
