@@ -33,6 +33,7 @@ export default createStore({
     "Brown 🟫": brownSound,
     "Waves 🌊": waveSound,
   },
+  currentlyPlaying: null, // Track the name of the currently playing sound
 
 },
   mutations: {
@@ -44,15 +45,29 @@ export default createStore({
       }
     },
     PLAY_SOUND(state, name) {
-      if (state.audioElements[name] && !state.audioElements[name].playing) {
-        state.audioElements[name].audio.play();
-        state.audioElements[name].playing = true;
+      // Pause the currently playing sound
+      if (state.currentlyPlaying && state.audioElements[state.currentlyPlaying]) {
+        state.audioElements[state.currentlyPlaying].audio.pause();
+        state.audioElements[state.currentlyPlaying].playing = false;
+      }
+  
+      // Play the new sound
+      const sound = state.audioElements[name];
+      if (sound && !sound.playing) {
+        sound.audio.play().then(() => {
+          sound.playing = true;
+          state.currentlyPlaying = name; // Update the currently playing sound
+        }).catch((err) => console.error("Error playing sound:", err));
       }
     },
     PAUSE_SOUND(state, name) {
-      if (state.audioElements[name] && state.audioElements[name].playing) {
-        state.audioElements[name].audio.pause();
-        state.audioElements[name].playing = false;
+      const sound = state.audioElements[name];
+      if (sound && sound.playing) {
+        sound.audio.pause();
+        sound.playing = false;
+        if (state.currentlyPlaying === name) {
+          state.currentlyPlaying = null; // Clear the currently playing sound
+        }
       }
     },
     SET_SOUND_PLAYING(state, { soundName, isPlaying }) {
@@ -128,7 +143,8 @@ export default createStore({
   },
   actions: {
     toggleSound({ commit, state }, name) {
-      if (state.audioElements[name] && state.audioElements[name].playing) {
+      const sound = state.audioElements[name];
+      if (sound && sound.playing) {
         commit('PAUSE_SOUND', name);
       } else {
         commit('PLAY_SOUND', name);
