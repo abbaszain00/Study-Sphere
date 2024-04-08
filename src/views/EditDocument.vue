@@ -19,7 +19,6 @@
         theme="snow"
       ></quill-editor>
     </div>
-    <button @click="saveDocument">Save Changes</button>
   </div>
 </template>
 
