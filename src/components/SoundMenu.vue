@@ -87,6 +87,7 @@ export default {
 .sound-menu {
   right: 20px;
   position: fixed;
+  height: 180px;
   width: 250px;
   background: #fff;
   border: 1px solid #ccc;
@@ -116,16 +117,16 @@ export default {
   font-family: "Inter";
   font-weight: bolder;
   cursor: pointer;
-  background-color: grey;
+  background-color: lightgray;
   border-radius: 15px;
 }
 
 .sound-list button:hover {
-  background-color: lightgray;
+  background-color: rgb(173, 169, 169);
 }
 
 .sound-list li {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .minimize-button {
@@ -138,6 +139,33 @@ export default {
   right: 10px;
   top: 0px;
 }
+.volume-control input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  background: #000000;
+  border-radius: 15px;
+  outline: none;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: rgb(3, 3, 3);
+  cursor: pointer;
+}
+
+.volume-control input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: #fff;
+  cursor: pointer;
+}
+
 .volume-control {
   text-align: center;
 }
