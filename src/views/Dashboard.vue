@@ -23,6 +23,18 @@
             class="search-input"
           />
         </div>
+        <!-- Add this inside your .actions div -->
+        <div class="dropdown">
+          <button class="dropbtn">Sort By</button>
+          <div class="dropdown-content">
+            <a href="#" @click.prevent="sortDocuments('alphabetical')"
+              >Alphabetical Order</a
+            >
+            <a href="#" @click.prevent="sortDocuments('lastModified')"
+              >Last Modified</a
+            >
+          </div>
+        </div>
       </div>
       <!-- Table structure for documents -->
       <table class="documents-table">
@@ -88,6 +100,17 @@ export default {
     },
   },
   methods: {
+    sortDocuments(method) {
+      if (method === "alphabetical") {
+        this.documents.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (method === "lastModified") {
+        this.documents.sort(
+          (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+        );
+      }
+      // Since Vue cannot detect array modifications through sort(), you might need to trigger reactivity:
+      this.documents = [...this.documents];
+    },
     ...mapActions(["fetchDocuments", "deleteDocumentById", "createDocument"]),
     redirectToSignIn() {
       window.location.href = "/signin";
@@ -255,5 +278,49 @@ body {
 .search-container {
   margin-left: auto;
   padding-right: 20px;
+}
+/* Dropdown Button */
+.dropbtn {
+  font-family: "Inter";
+  margin: 10px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: 0.3s;
+  font-weight: bold;
+  width: 100px !important;
+  height: 40px !important;
+  margin-top: 20px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: grey;
 }
 </style>
