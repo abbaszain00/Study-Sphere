@@ -26,6 +26,8 @@
 import { QuillEditor } from "@vueup/vue-quill";
 import axios from "axios";
 import Top from "@/components/Top.vue";
+import { isTokenExpiringSoon } from "@/utils/util.js";
+import { isTokenValid } from "@/utils/util.js";
 
 export default {
   components: {
@@ -41,6 +43,20 @@ export default {
     };
   },
   methods: {
+    checkTokenExpiration() {
+      if (!isTokenValid()) {
+        // Assuming you have a method to check token validity
+        clearInterval(this.expirationCheckInterval);
+        return; // Exit if the token is no longer valid
+      }
+
+      if (isTokenExpiringSoon(5)) {
+        alert(
+          "Your session is about to expire in 5 minutes. Please save your changes and re-login."
+        );
+      }
+    },
+
     async fetchDocument() {
       const token = localStorage.getItem("token");
       try {
@@ -99,6 +115,10 @@ export default {
   },
   mounted() {
     this.fetchDocument();
+    this.tokenCheckInterval = setInterval(this.checkTokenExpiration, 60 * 1000);
+
+    // Perform an initial check in case the token is already close to expiring
+    this.checkTokenExpiration();
   },
   beforeRouteLeave(to, from, next) {
     // Automatically save the document before leaving the page
@@ -106,6 +126,10 @@ export default {
 
     // Call next() to proceed with the route navigation
     next();
+  },
+  beforeDestroy() {
+    // Clear the interval to prevent memory leaks
+    clearInterval(this.tokenCheckInterval);
   },
 };
 </script>
