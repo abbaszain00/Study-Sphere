@@ -274,7 +274,7 @@ export default createStore({
     },
     plugins: [
       createPersistedState({
-        paths: ['playingSounds','volume', 'isSidebarOpen', 'isSoundMenuVisible', 'isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
+        paths: [ 'tasks', 'playingSounds','volume', 'isSidebarOpen', 'isSoundMenuVisible', 'isChatBotVisible', 'isToDoListVisible', 'isPomodoroTimerVisible', 'timerRunning', 'timerSecondsLeft', 'timerStartTimestamp', 'currentMode'],
         rehydrated(store) {
           Object.keys(store.state.playingSounds).forEach(name => {
             const url = store.state.soundUrls[name];
