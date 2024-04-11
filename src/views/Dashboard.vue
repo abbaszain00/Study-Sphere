@@ -20,6 +20,7 @@
             type="text"
             v-model="searchQuery"
             placeholder="Search documents..."
+            class="search-input"
           />
         </div>
       </div>
@@ -186,11 +187,13 @@ body {
   cursor: pointer;
   background-color: white;
   color: black;
-  padding: 10px 20px;
   text-decoration: none;
   border-radius: 5px;
   transition: 0.3s;
   font-weight: bold;
+  width: 100px !important; /* Adjust as needed */
+  height: 40px !important; /* Adjust as needed */
+  margin-top: 20px;
 }
 
 .file-section .actions button:hover {
@@ -232,16 +235,17 @@ body {
   cursor: pointer;
 }
 
-.search-container input {
-  padding: 10px; /* Increase padding to ensure vertical height is enough */
+.search-container .search-input {
+  padding: 10px; /* Adjust padding as necessary */
   margin: 20px 0;
-  width: 500px; /* Adjust width as necessary */
+  width: 500px; /* Use 100% to fill the container, or set a fixed width */
   border: 1px solid #000000;
   border-radius: 4px;
   background-color: #ffffff;
   font-family: "Inter";
   font-size: 16px; /* Ensuring font size is explicitly set */
-  height: 40px; /* Explicitly setting the height to prevent shrinking */
+  height: var(--input-height); /* Use CSS variable */
+  box-sizing: border-box; /* Ensures padding doesn't affect the final size */
 }
 
 .actions {
