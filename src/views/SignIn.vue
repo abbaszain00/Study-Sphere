@@ -5,6 +5,9 @@
     </div>
     <div class="signin-section">
       <div class="signin-box">
+        <p v-if="sessionExpiredMessage" class="session-expired-message">
+          {{ sessionExpiredMessage }}
+        </p>
         <h2>Login</h2>
         <div class="login-details">
           <form @submit.prevent="handleLogin">
@@ -54,6 +57,7 @@ export default {
     return {
       email: "",
       password: "",
+      sessionExpiredMessage: "",
     };
   },
   methods: {
@@ -86,6 +90,13 @@ export default {
         alert(error.response?.data?.message || "Login failed"); // Handle error responses from axios
       }
     },
+  },
+  created() {
+    // Check for the query parameter upon component creation
+    if (this.$route.query.sessionExpired === "true") {
+      this.sessionExpiredMessage =
+        "Your session has expired. Please log in again.";
+    }
   },
 };
 </script>
@@ -176,5 +187,10 @@ input[type="password"] {
 
 .signup a:hover {
   color: grey;
+}
+.session-expired-message {
+  color: #d9534f; /* Bootstrap 'danger' color */
+  text-align: center;
+  margin-top: 15px;
 }
 </style>

@@ -6,6 +6,7 @@ import FaqView from '@/views/FaqView.vue';
 import SignIn from '@/views/SignIn.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import VideoView from '@/views/VideoView.vue';
+import { isTokenValid } from '@/utils/util'
 
 // Define routes, marking public ones with a meta field
 const routes = [
@@ -72,14 +73,17 @@ const router = createRouter({
 
 // Add a global beforeEach guard to check for route access
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('token'); // Or implement your authentication logic here
+  const isAuthenticated = isTokenValid(); // Use the isTokenValid function here
   const isPublicRoute = to.matched.some(record => record.meta.public);
 
   if (!isPublicRoute && !isAuthenticated) {
-    // If trying to access a protected route and not authenticated, redirect to signin
-    next('/signin');
+    // If trying to access a protected route and the token is invalid or expired, redirect to signin
+    next({
+      path: '/signin',
+      query: { sessionExpired: 'true' }
+    });
   } else if ((to.path === '/signin' || to.path === '/signup') && isAuthenticated) {
-    // If already authenticated, redirect from signin/signup to dashboard
+    // If already authenticated and trying to access signin/signup, redirect to dashboard
     next('/dashboard');
   } else {
     // Otherwise, proceed as normal
