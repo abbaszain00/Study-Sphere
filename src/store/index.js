@@ -181,17 +181,23 @@ export default createStore({
       .then(response => commit('setDocuments', response.data))
       .catch(error => console.error("Error fetching documents:", error));
     },
-    createDocument({ commit }, documentData) {
+    async createDocument({ commit }, documentData) {
       const token = localStorage.getItem('token');
-      axios.post('/api/documents', documentData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(response => commit('addDocument', response.data.document))
-      .catch(error => console.error("Error creating document:", error));
+      try {
+        const response = await axios.post('/api/documents', documentData, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        commit('addDocument', response.data.document); // Ensure this matches the backend response structure
+      } catch (error) {
+        console.error("Error creating document:", error);
+        throw error; // Rethrow to handle it in the component, if necessary
+      }
     },
+    
+    
     addChatMessage({ commit }, message) {
       commit('addChatMessage', message);
     },

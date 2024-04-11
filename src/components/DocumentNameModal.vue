@@ -28,8 +28,14 @@ export default {
       this.$emit("close");
     },
     save() {
-      this.$emit("save", this.documentName);
-      this.documentName = ""; // Reset the name field
+      if (this.documentName.trim()) {
+        this.$emit("save", this.documentName);
+        this.documentName = ""; // Reset the name field
+      } else {
+        // Handle the case where the document name is empty.
+        // You could alert the user, show a message in the UI, etc.
+        alert("Document name is required.");
+      }
     },
   },
 };
