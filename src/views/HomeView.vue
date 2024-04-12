@@ -1,12 +1,11 @@
 <template>
-  <div class ="home-container">
+  <div class="home-container">
     <div id="navbar">
       <Navbar />
-
     </div>
-    <div class ="homepage-section">
+    <div class="homepage-section">
       <h2>All your study needs in one place</h2>
-      <div class= "homepage-button">
+      <div class="homepage-button">
         <router-link to="/signup" class="get-started">Get Started</router-link>
       </div>
     </div>
@@ -14,9 +13,9 @@
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue';
+import Navbar from "@/components/Navbar.vue";
 export default {
-  name: 'HomeView',
+  name: "HomeView",
   components: {
     Navbar,
   },
@@ -25,12 +24,11 @@ export default {
 
 <style>
 .home-container {
-  background: linear-gradient(white, #D3D0D0,#A1A1A1);
+  background: linear-gradient(white, #d3d0d0, #a1a1a1);
   height: 100vh;
   margin: 0px;
   overflow: hidden;
-  font-family: 'Inter', sans-serif;
-  
+  font-family: "Inter", sans-serif;
 }
 
 .homepage-section {
@@ -40,7 +38,7 @@ export default {
   justify-content: center;
   text-align: center;
   font-size: 28px;
-  margin-top: 30px;
+  margin-top: 230px;
 }
 
 .get-started {
