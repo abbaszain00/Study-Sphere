@@ -6,6 +6,7 @@ const cors = require('cors');
 const sanitizeHtml = require('sanitize-html');
 const OpenAI = require('openai');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Assuming token is sent as "Bearer <token>"
   if (!token) {
@@ -240,6 +241,42 @@ app.post('/api/chat', async (req, res) => {
     }
   }
 });
+
+// Create a reusable transporter object using the default SMTP transport
+let transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: process.env.SMTP_PORT == 465, // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
+
+// In your contact route:
+app.post('/api/contact', async (req, res) => {
+  const { name, email, subject, message } = req.body;
+  try {
+    let mailOptions = {
+      from: '"Website Contact" <info@example.com>',
+      to: 'admin@example.com',
+      subject: `New Contact from ${name}`,
+      text: `You have received a new message from ${email}: ${message}`,
+      html: `<b>You have received a new message from ${email}:</b><p>${message}</p>`
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Message sent: %s", info.messageId);
+
+    const contacts = db.collection('contacts');
+    await contacts.insertOne({ name, email, subject, message, createdAt: new Date() });
+    res.status(201).json({ message: 'Your message has been sent successfully. Thank you!' });
+  } catch (error) {
+    console.error("Failed to send message or save in DB:", error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 
 
