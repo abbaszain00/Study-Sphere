@@ -192,5 +192,7 @@ input[type="password"] {
   color: #d9534f; /* Bootstrap 'danger' color */
   text-align: center;
   margin-top: 15px;
+  font-size: 20px;
+  font-weight: bold;
 }
 </style>
