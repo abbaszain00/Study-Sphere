@@ -74,23 +74,6 @@ export default {
       }
     },
 
-    // async fetchDocument() {
-    //   const token = localStorage.getItem("token");
-    //   try {
-    //     const response = await axios.get(
-    //       `/api/documents/${this.$route.params.id}`,
-    //       {
-    //         headers: { Authorization: `Bearer ${token}` },
-    //       }
-    //     );
-    //     this.title = response.data.title;
-    //     this.modelname = response.data.content; // Assign content here
-    //     this.originalModelname = response.data.content; // Store original content
-    //   } catch (error) {
-    //     console.error("Failed to fetch document:", error);
-    //   }
-    // },
-
     async saveDocument() {
       const token = localStorage.getItem("token");
       const documentData = {
@@ -208,36 +191,25 @@ nav.top {
   background-color: #f3f3f3;
 }
 @page {
-  margin: 1inch;
+  margin: 0.5in;
 }
 @media print {
   body {
-    background-color: none;
+    background-color: transparent;
     overflow-y: visible; /* Ensure overflow content is visible */
   }
-
-  .top {
-    display: none; /* Hide the top navigation bar */
+  .top,
+  .nav {
+    display: none; /* Hide navigation and other non-relevant elements */
   }
-
-  .create-document,
-  .form-group {
-    width: 100%; /* Use full width for printing */
-    overflow: visible; /* Ensure content is not clipped */
-    page-break-inside: avoid; /* Avoid breaking inside elements */
-  }
-
-  .form-group .ql-editor {
-    width: 100%; /* Adjusted for print, ensuring it fits the page */
-    height: auto; /* Allow height to adjust based on content */
-    padding: 1in; /* Maintain padding as per requirements */
-    margin: 0 auto; /* Center horizontally */
-    box-shadow: none;
-    page-break-after: auto; /* Allow content to flow across pages */
-  }
-
   .form-group .ql-toolbar.ql-snow {
-    display: none; /* Hide the editor toolbar */
+    display: none; /* Hide the editor toolbar during printing */
+  }
+  .form-group .ql-editor {
+    width: 100%; /* Adjust width to avoid overflow */
+    height: auto; /* Let height adjust based on content */
+    padding: 0; /* Remove padding during print to save space and prevent blank pages */
+    box-shadow: none; /* Remove box shadow during print */
   }
 }
 </style>
