@@ -276,6 +276,54 @@ app.post('/api/contact', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+// Password Update Route
+app.post('/api/change-password', authenticate, async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const userId = req.userId;
+
+  try {
+    const users = db.collection('users');
+    const user = await users.findOne({ _id: new ObjectId(userId) });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(403).json({ message: 'Invalid current password' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await users.updateOne({ _id: user._id }, { $set: { password: hashedPassword } });
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+// Get User Details
+// Get User Details
+app.get('/api/user', authenticate, async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const users = db.collection('users');
+    // Exclude password from the results
+    const user = await users.findOne({ _id: new ObjectId(userId) }, { projection: { password: 0 } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Failed to fetch user details:", error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 
 
 

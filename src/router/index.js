@@ -7,6 +7,7 @@ import SignIn from '@/views/SignIn.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import VideoView from '@/views/VideoView.vue';
 import { isTokenValid } from '@/utils/util'
+import Settings from '@/views/Settings.vue';
 
 // Define routes, marking public ones with a meta field
 const routes = [
@@ -62,6 +63,12 @@ const routes = [
     path: '/videos',
     name: 'videos',
     component: VideoView, 
+    meta: { public: false },
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: Settings, 
     meta: { public: false },
   },
 ];

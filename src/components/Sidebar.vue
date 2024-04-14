@@ -31,7 +31,7 @@
           <font-awesome-icon icon="comment" size="2x" />
           <p>Chat-Bot</p>
         </button>
-        <button>
+        <button @click="goToSettingsPage">
           <font-awesome-icon icon="gear" size="2x" />
           <p>Settings</p>
         </button>
@@ -79,6 +79,9 @@ export default {
     },
     goToVideosPage() {
       this.$router.push("/Videos");
+    },
+    goToSettingsPage() {
+      this.$router.push("/Settings");
     },
   },
 };
