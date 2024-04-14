@@ -24,7 +24,23 @@
             <label>New Password:</label>
             <input type="password" v-model="passwords.newPassword" required />
           </div>
-          <button type="submit">Change Password</button>
+          <div>
+            <label>Confirm New Password:</label>
+            <input
+              type="password"
+              v-model="passwords.confirmNewPassword"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            :disabled="passwords.newPassword !== passwords.confirmNewPassword"
+          >
+            Change Password
+          </button>
+          <p v-if="passwords.newPassword !== passwords.confirmNewPassword">
+            Passwords do not match.
+          </p>
         </form>
       </div>
     </div>
@@ -50,6 +66,7 @@ export default {
       passwords: {
         oldPassword: "",
         newPassword: "",
+        confirmNewPassword: "",
       },
     };
   },
@@ -73,8 +90,16 @@ export default {
         });
     },
     async changePassword() {
-      if (!this.passwords.oldPassword || !this.passwords.newPassword) {
-        alert("Please fill in all password fields.");
+      if (
+        !this.passwords.oldPassword ||
+        !this.passwords.newPassword ||
+        !this.passwords.confirmNewPassword
+      ) {
+        alert("Please fill in all fields.");
+        return;
+      }
+      if (this.passwords.newPassword !== this.passwords.confirmNewPassword) {
+        alert("The new passwords do not match.");
         return;
       }
 
@@ -95,12 +120,13 @@ export default {
         alert(response.data.message);
         this.passwords.oldPassword = "";
         this.passwords.newPassword = "";
+        this.passwords.confirmNewPassword = "";
       } catch (error) {
         console.error(
           "Failed to change password:",
-          error.response.data.message
+          error.response ? error.response.data.message : error.message
         );
-        alert(error.response.data.message);
+        alert("Failed to change password.");
       }
     },
   },
@@ -116,16 +142,52 @@ export default {
   height: 100vh;
   font-family: "Inter", sans-serif;
   background-color: #f4f4f4;
+  font-family: "Inter";
 }
 .settings-content {
   padding: 20px;
   max-width: 600px;
   margin: 0 auto;
+  font-family: "Inter";
 }
+
 .settings-section {
   background: #fff;
   padding: 20px;
   margin-top: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Inter";
+}
+
+.settings-section label {
+  font-weight: bolder;
+}
+
+.settings-section button {
+  font-family: "Inter";
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: 0.3s;
+  font-weight: bold;
+  margin-top: 20px;
+  height: 40px;
+}
+.settings-section button:hover {
+  background-color: grey;
+}
+.settings-section input {
+  width: 80%;
+  padding: 12px 30px;
+  margin: 8px 0;
+  display: block;
+  box-sizing: border-box;
+  background-color: #d9d9d9;
+  border: none;
+  border-radius: 10px;
+  height: 50px;
+  font-family: "Inter";
 }
 </style>
