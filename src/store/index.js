@@ -22,7 +22,7 @@ export default createStore({
     currentMode: 'work', // 'work', 'shortBreak', 'longBreak'
     timerIntervalID: null, // To store the interval ID
     modeDurations: {
-      work: 10,
+      work: 25 * 60,
       shortBreak: 5 * 60,
       longBreak: 15 * 60,
   },

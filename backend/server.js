@@ -251,13 +251,12 @@ var transporter = nodemailer.createTransport({
   }
 });
 
-// Example of using this transporter to send an email
 app.post('/api/contact', async (req, res) => {
   const { name, email, subject, message } = req.body;
   try {
       let mailOptions = {
           from: '"Website Contact" <info@example.com>',
-          to: 'your-email@example.com',  // Set this to an email to view in Mailtrap
+          to: 'your-email@example.com',  
           subject: `New Contact from ${name}`,
           text: `You have received a new message from ${email}: ${message}`,
           html: `<b>You have received a new message from ${email}:</b><p>${message}</p>`

@@ -28,7 +28,6 @@
                 v-model="password"
                 required
               />
-              <a href="#" class="forgot-pw">Forgot password?</a>
             </div>
             <!-- Submit button -->
             <div class="input-group">
@@ -134,19 +133,6 @@ export default {
   align-items: center; /* Align items to the start */
   margin-bottom: 0px; /* Increase or adjust spacing between groups as needed */
   padding-top: 50px;
-}
-
-.forgot-pw {
-  font-size: 15px;
-  padding: 0px;
-  margin: 0px;
-  padding-right: 320px;
-  text-decoration: none;
-  color: black;
-}
-
-.forgot-pw:hover {
-  color: grey;
 }
 
 input[type="email"],
