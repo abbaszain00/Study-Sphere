@@ -242,38 +242,33 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-// Create a reusable transporter object using the default SMTP transport
-let transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: process.env.SMTP_PORT == 465, // true for 465, false for other ports
+var transporter = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
+      user: process.env.MAILTRAP_USER,  // Use environment variable
+      pass: process.env.MAILTRAP_PASS   // Use environment variable
   }
 });
 
-// In your contact route:
+// Example of using this transporter to send an email
 app.post('/api/contact', async (req, res) => {
   const { name, email, subject, message } = req.body;
   try {
-    let mailOptions = {
-      from: '"Website Contact" <info@example.com>',
-      to: 'admin@example.com',
-      subject: `New Contact from ${name}`,
-      text: `You have received a new message from ${email}: ${message}`,
-      html: `<b>You have received a new message from ${email}:</b><p>${message}</p>`
-    };
+      let mailOptions = {
+          from: '"Website Contact" <info@example.com>',
+          to: 'your-email@example.com',  // Set this to an email to view in Mailtrap
+          subject: `New Contact from ${name}`,
+          text: `You have received a new message from ${email}: ${message}`,
+          html: `<b>You have received a new message from ${email}:</b><p>${message}</p>`
+      };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Message sent: %s", info.messageId);
-
-    const contacts = db.collection('contacts');
-    await contacts.insertOne({ name, email, subject, message, createdAt: new Date() });
-    res.status(201).json({ message: 'Your message has been sent successfully. Thank you!' });
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Message sent: %s", info.messageId);
+      res.status(201).json({ message: 'Your message has been sent successfully. Thank you!' });
   } catch (error) {
-    console.error("Failed to send message or save in DB:", error);
-    res.status(500).json({ message: 'Internal server error' });
+      console.error("Failed to send message:", error);
+      res.status(500).json({ message: 'Internal server error' });
   }
 });
 // Password Update Route
