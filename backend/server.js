@@ -296,8 +296,35 @@ app.post('/api/change-password', authenticate, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-// Get User Details
-// Get User Details
+// Delete User Account Route
+app.delete('/api/delete-account', authenticate, async (req, res) => {
+  const userId = req.userId;
+  try {
+    // Connect to the users collection
+    const users = db.collection('users');
+    // Connect to the documents collection
+    const documents = db.collection('documents');
+
+    // Start by deleting the user's documents
+    const deleteDocsResult = await documents.deleteMany({ userId: userId });
+    console.log(`Deleted ${deleteDocsResult.deletedCount} documents for the user.`);
+
+    // Then delete the user account
+    const deleteUserResult = await users.deleteOne({ _id: new ObjectId(userId) });
+    if (deleteUserResult.deletedCount === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'Account and all associated documents deleted successfully' });
+  } catch (error) {
+    console.error("Failed to delete user account and documents:", error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
 app.get('/api/user', authenticate, async (req, res) => {
   const userId = req.userId;
 

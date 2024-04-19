@@ -38,6 +38,9 @@
           >
             Change Password
           </button>
+          <button type="button" @click="deleteAccount" class="delete-button">
+            Delete Account
+          </button>
           <p v-if="passwords.newPassword !== passwords.confirmNewPassword">
             Passwords do not match.
           </p>
@@ -72,6 +75,29 @@ export default {
   },
 
   methods: {
+    deleteAccount() {
+      if (
+        confirm(
+          "Are you sure you want to delete your account? This cannot be undone."
+        )
+      ) {
+        axios
+          .delete("/api/delete-account", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
+          .then(() => {
+            alert("Your account has been deleted.");
+            localStorage.removeItem("token"); // Remove the stored token
+            this.$router.push("/Signin"); // Redirect to login or home page
+          })
+          .catch((error) => {
+            console.error("Failed to delete account:", error);
+            alert("Failed to delete account.");
+          });
+      }
+    },
     fetchUserData() {
       axios
         .get("/api/user", {
@@ -189,5 +215,12 @@ export default {
   border-radius: 10px;
   height: 50px;
   font-family: "Inter";
+}
+.delete-button {
+  background-color: red;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-left: 10px; /* Space from the change password button */
 }
 </style>
