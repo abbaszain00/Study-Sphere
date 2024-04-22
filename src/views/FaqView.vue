@@ -1,16 +1,23 @@
 <template>
-  <div class="signup-container">
+  <div class="faq-container">
+    <!--Navbar-->
     <div id="navbar">
       <Navbar />
     </div>
-    <div class="signup-section">
+    <!-- Main FAQ section -->
+    <div class="faq-section">
       <h1>Frequently Asked Questions</h1>
+      <!-- Container for individual FAQ items -->
       <div class="faq-container">
+        <!-- Loop over the FAQs array, creating a div for each FAQ item -->
         <div v-for="(faq, index) in faqs" :key="index" class="faq-item">
+          <!-- Button to toggle the visibility of the FAQ answer -->
           <button @click="toggleFaq(index)" class="faq-question">
+            <!-- Toggle symbol changes based on whether the FAQ is open or not -->
             <span class="faq-toggle">{{ faq.open ? "-" : "+" }}</span>
             {{ faq.question }}
           </button>
+          <!-- FAQ answer displayed only if the 'open' property is true -->
           <div v-if="faq.open" class="faq-answer">
             {{ faq.answer }}
           </div>
@@ -21,21 +28,23 @@
 </template>
 
 <script>
-import Navbar from "@/components/Navbar.vue";
+import Navbar from "@/components/Navbar.vue"; //Import Navbar component
 
 export default {
-  name: "SignUp",
+  name: "FaqView",
   components: {
+    //Component declarations
     Navbar,
   },
   data() {
+    //Array of FAQ objects, each containing a question, answer, and open state
     return {
       faqs: [
         {
           question: "What is Study Sphere?",
           answer:
             "An all-in-one productivity tool for students. Whether you like digital or traditional note-taking, study-sphere is the place for you. You can create notes, listen to some deep focus ambient noise, or even put on a nice background video for your revision.",
-          open: false,
+          open: false, // Initially, the answer is not visible
         },
         {
           question: "How do I sign up?",
@@ -58,6 +67,7 @@ export default {
     };
   },
   methods: {
+    // Method to toggle the 'open' state of an FAQ item
     toggleFaq(index) {
       this.faqs[index].open = !this.faqs[index].open;
     },
@@ -66,32 +76,23 @@ export default {
 </script>
 
 <style>
-.signup-container {
+.faq-container {
   background: linear-gradient(white, #d3d0d0, #a1a1a1);
   height: 100vh;
   margin: 0px;
-  overflow: hidden;
+  overflow: visible;
   font-family: "Inter", sans-serif;
+  width: 100%;
 }
 
-.signup-section {
-  padding: 20px;
+.faq-section {
   text-align: center;
   font-size: 18px;
-}
-
-.faq-container {
-  margin-top: 20px;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: "Inter", sans-serif;
+  width: 100%;
 }
 
 .faq-item {
-  margin: 10px;
-  width: 80%;
+  width: 100%;
 }
 
 .faq-question {
@@ -118,10 +119,14 @@ export default {
   margin-top: 5px;
   text-align: left;
   font-size: 16px;
-  background-color: #c4c2c2; /* Darker shade for the answer */
+  background-color: #c4c2c2;
   padding: 10px;
   border-radius: 5px;
   font-family: "Inter", sans-serif;
   border: 1px solid black;
+  width: 100%;
+}
+.navbar {
+  width: 100%;
 }
 </style>

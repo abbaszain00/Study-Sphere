@@ -8,15 +8,19 @@
       @mouseleave="dragEnd"
     >
       Nature Sounds
+      <!--Minimise button-->
       <button class="minimize-button" @click="toggleSoundMenuVisibility">
         -
       </button>
     </div>
+    <!--List of sounds-->
     <ul class="sound-list">
       <li v-for="(sound, index) in sounds" :key="index">
+        <!-- Button to play or stop a sound -->
         <button @click="toggleSound(sound.name)">{{ sound.name }}</button>
       </li>
     </ul>
+    <!-- Volume control slider -->
     <div class="volume-control">
       <input type="range" min="0" max="1" step="0.01" v-model="volumeLevel" />
     </div>
@@ -24,7 +28,8 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex"; //Import actions, state and mutations from vuex store
+//Importing sounds from assets
 import rainSound from "@/assets/sounds/rain.mp3";
 import brownSound from "@/assets/sounds/brown.wav";
 import waveSound from "@/assets/sounds/waves.mp3";
@@ -37,6 +42,7 @@ export default {
       startX: 0,
       startY: 0,
       sounds: [
+        // Array of sound objects with names and file paths
         { name: "Rain 🌧️", url: rainSound },
         { name: "Brown 🟫", url: brownSound },
         { name: "Waves 🌊", url: waveSound },
@@ -44,7 +50,8 @@ export default {
     };
   },
   computed: {
-    ...mapState(["isSoundMenuVisible"]),
+    ...mapState(["isSoundMenuVisible"]), // Maps Vuex state to local computed properties
+    // Retrieves the current volume level from Vuex store
     volumeLevel: {
       get() {
         return this.$store.state.volume;
@@ -55,19 +62,19 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["toggleSoundMenuVisibility"]),
-    ...mapActions(["toggleSound", "initializeSound"]),
+    ...mapMutations(["toggleSoundMenuVisibility"]), // Maps Vuex mutations to local methods
+    ...mapActions(["toggleSound", "initializeSound"]), // Maps Vuex actions to local methods
     updateVolume() {
-      this.$store.dispatch("setVolume", this.volume);
+      this.$store.dispatch("setVolume", this.volume); // Dispatches action to update volume in the store
     },
     dragStart(event) {
-      this.isDragging = true;
+      this.isDragging = true; // Sets the dragging state to true
       this.startX = event.clientX - this.$el.offsetLeft;
       this.startY = event.clientY - this.$el.offsetTop;
       event.preventDefault(); // Prevent text selection or other default actions
     },
     dragging(event) {
-      if (!this.isDragging) return;
+      if (!this.isDragging) return; // Exits if not dragging
       this.$el.style.left = `${event.clientX - this.startX}px`;
       this.$el.style.top = `${event.clientY - this.startY}px`;
     },
@@ -77,7 +84,7 @@ export default {
   },
   mounted() {
     this.sounds.forEach((sound) => {
-      this.initializeSound({ name: sound.name, url: sound.url });
+      this.initializeSound({ name: sound.name, url: sound.url }); // Initializes each sound
     });
   },
 };

@@ -1,14 +1,14 @@
 <template>
-    <nav class="navbar">
+  <nav class="navbar">
     <!-- Logo image leading to Home -->
     <router-link to="/" class="navbar-logo">
       <img src="./icons/black-writing-logo.png" alt="StudySphere Logo" />
     </router-link>
-    
+    <!--Container for navigation items-->
     <div class="nav-items">
       <router-link to="/faq" class="nav-link">FAQ</router-link>
       <router-link to="/contact" class="nav-link">CONTACT</router-link>
-      
+
       <!-- Sign In Button -->
       <router-link to="/signin" class="nav-button">LOG IN</router-link>
     </div>
@@ -31,7 +31,6 @@ export default {
   background-color: white;
   color: white;
   top: 50px;
-  /* border-bottom: 1px solid #000; */
 }
 
 .navbar-logo img {
@@ -44,69 +43,65 @@ export default {
 .nav-items {
   display: flex;
   align-items: center;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: bold;
   font-size: 18px;
   padding: 100px;
   gap: 120px;
 }
 
-
-
-.nav-link, .nav-button {
+.nav-link,
+.nav-button {
   margin-left: 20px;
   text-decoration: none;
   color: black;
   padding: 0.5rem;
   border-radius: 5px;
-  transition: 0.3s; /* Smooth transition for background color */
+  transition: 0.3s;
 }
 
 .nav-link {
-  position: relative; /* Establish positioning context */
-  margin-left: 20px; /* Adjust spacing as needed */
+  position: relative;
+  margin-left: 20px;
   text-decoration: none;
   color: black;
   padding: 0.5rem;
   border-radius: 5px;
-  transition: color 0.3s; /* Smooth color transition */
+  transition: color 0.3s;
 }
 
-/* Underline effect */
 .nav-link::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 0;
-  height: 2px; /* Height of the underline */
-  background-color: black; /* Color of the underline */
-  transition: width 0.3s ease; /* Smooth width transition for the animation */
+  height: 2px;
+  background-color: black;
+  transition: width 0.3s ease;
 }
 
 .nav-link:hover::after {
-  width: 100%; /* Underline expands to full width on hover */
+  width: 100%;
 }
 
 .nav-link:hover {
-  color: black; /* Optional: change text color on hover */
+  color: black;
 }
 
-
 .nav-button {
-  background-color: black; /* Light gray background */
-  color: white; /* White text */
-  padding: 10px 20px; /* Increased padding to make the button bigger */
-  margin-left: 20px; /* Adjusted margin */
+  background-color: black;
+  color: white;
+  padding: 10px 20px;
+  margin-left: 20px;
   text-decoration: none;
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  transition: 0.3s; /* Smooth transition for hover effect */
+  transition: 0.3s;
 }
 
 .nav-button:hover {
-  background-color: rgb(70, 70, 70); /* Darken the button when hovered */
+  background-color: rgb(70, 70, 70);
 }
-
 </style>

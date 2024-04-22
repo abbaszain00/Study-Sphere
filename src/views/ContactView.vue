@@ -58,7 +58,7 @@
 
 <script>
 import axios from "axios"; // Import Axios for making HTTP requests
-import Navbar from "@/components/Navbar.vue";
+import Navbar from "@/components/Navbar.vue"; //Import navbar component
 
 export default {
   name: "Contact",
@@ -109,7 +109,7 @@ export default {
   background: linear-gradient(white, #d3d0d0, #a1a1a1);
   height: 100vh;
   margin: 0px;
-  overflow: hidden;
+  overflow: scroll;
   font-family: "Inter", sans-serif;
 }
 
@@ -125,7 +125,7 @@ export default {
 
 .contact-box {
   background-color: #ffffff;
-  height: 700px;
+  height: 750px;
   margin: auto;
   width: 600px;
   padding: 10px;

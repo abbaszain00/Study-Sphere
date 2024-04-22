@@ -1,92 +1,114 @@
 <template>
   <div class="signup-container">
     <div id="navbar">
+      <!--Navbar component-->
       <Navbar />
     </div>
     <div class="signup-section">
+      <!--Box containing all Sign Up info-->
       <div class="signup-box">
+        <!--Container on the left with design and text-->
         <div class="left">
           <h2>Create your own StudySphere account</h2>
-          <img src="@/components/icons/white-logo.png">
+          <img src="@/components/icons/white-logo.png" />
         </div>
+        <!--Container on the right with Sign Up form-->
         <div class="right">
           <h2>Sign Up</h2>
           <form @submit.prevent="createAccount">
-            <div class ="names">
-            <input type="text" placeholder="First Name" v-model="firstName" required>
-            <input type="text" placeholder="Last Name" v-model="lastName" required>
+            <!-- Input fields for first and last name -->
+            <div class="names">
+              <input
+                type="text"
+                placeholder="First Name"
+                v-model="firstName"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                v-model="lastName"
+                required
+              />
             </div>
-              <input type="email" placeholder="Email" v-model="email" required>
-              <input type="password" placeholder="Password" v-model="password" required>
+            <!-- Input field for email -->
+            <input type="email" placeholder="Email" v-model="email" required />
+            <!-- Input field for password -->
+            <input
+              type="password"
+              placeholder="Password"
+              v-model="password"
+              required
+            />
+            <!-- Submit button for the form -->
             <button type="submit">Create Account</button>
           </form>
-          <p>
-            Already have an account? <a href="/signin">Login</a>
-          </p>
+          <!-- Link to the sign-in page if the user already has an account -->
+          <p>Already have an account? <a href="/signin">Login</a></p>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <script>
-import Navbar from '@/components/Navbar.vue';
-import SignIn from './SignIn.vue';
+import Navbar from "@/components/Navbar.vue"; //Import Navbar component
 
 export default {
-  name: 'SignUp',
+  name: "SignUp",
   components: {
-    Navbar,
+    Navbar, //Declare navbar component
   },
   data() {
     return {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
     };
   },
   methods: {
+    //Method for creating account
     async createAccount() {
-  try {
-    const response = await fetch('http://localhost:3000/api/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        firstName: this.firstName,
-        lastName: this.lastName,
-        email: this.email,
-        password: this.password,
-      }),
-    });
+      try {
+        // Perform a POST request to the signup API endpoint
+        const response = await fetch("http://localhost:3000/api/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: this.firstName,
+            lastName: this.lastName,
+            email: this.email,
+            password: this.password,
+          }),
+        });
 
-    const data = await response.json(); // Assuming the server always sends a JSON response
+        const data = await response.json(); // Parse JSON response from server
 
-    if (!response.ok) {
-      throw new Error(data.message || 'Signup failed');
-    }
+        if (!response.ok) {
+          throw new Error(data.message || "Signup failed");
+        }
 
-    alert(data.message); // Show success message or redirect
-    this.$router.push({ name: 'Signin' });// Redirect to login page or dashboard as appropriate
-  } catch (error) {
-    console.error('Error:', error);
-    alert(error.message); // Display the actual error message from the server or the default 'Signup failed'
-  }
-}
-  }
-}
+        alert(data.message); // Show success message
+        this.$router.push({ name: "Signin" }); // Redirect to login page
+      } catch (error) {
+        console.error("Error:", error);
+        alert(error.message); // Display the actual error message from the server or the default 'Signup failed'
+      }
+    },
+  },
+};
 </script>
 
 <style>
 .signup-container {
-  background: linear-gradient(white, #D3D0D0,#A1A1A1);
+  background: linear-gradient(white, #d3d0d0, #a1a1a1);
   height: 100vh;
   margin: 0px;
   overflow: hidden;
-  font-family: 'Inter', sans-serif;  
+  font-family: "Inter", sans-serif;
 }
 
 .signup-section {
@@ -101,12 +123,12 @@ export default {
 
 .signup-box {
   background: linear-gradient(
-    to left, 
-    #FFF 0%, 
-    #FFF 55%, 
-    #000000 30%, 
+    to left,
+    #fff 0%,
+    #fff 55%,
+    #000000 30%,
     #000000 100%
-  );  
+  );
   height: 700px;
   margin: auto;
   width: 1000px;
@@ -129,10 +151,9 @@ export default {
   color: white;
   margin-right: 10px;
   margin-top: 100px;
-  
 }
 
-.left img{
+.left img {
   height: 350px;
   width: 350px;
 }
@@ -142,40 +163,38 @@ export default {
   width: 600px;
   display: flex;
   flex-direction: column;
-  /* align-items: flex-start;  */
-  padding-left: 50px; /* Adjust as needed for internal spacing */
+  padding-left: 50px;
 }
-
 
 .names {
   display: flex;
-  gap: 20px; /* Adjust the gap between the inputs */
-  width: 100%; /* Take up full width to align with other inputs */
-  margin-bottom: 15px; 
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 15px;
 }
 
 .names input {
-  flex: 1; /* Allows both inputs to share the available space equally */
+  flex: 1;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
 
-/* Ensure email and password inputs align with name inputs */
-.right input[type="email"], .right input[type="password"] {
-  width: 100%; /* Adjust width to match name inputs considering padding */
-  margin-bottom: 15px; /* Consistent spacing */
-
+.right input[type="email"],
+.right input[type="password"] {
+  width: 100%;
+  margin-bottom: 15px;
 }
 
-.right input[type="email"], .right input[type="text"] {
+.right input[type="email"],
+.right input[type="text"] {
   margin-right: 20px;
   width: 100%;
   padding: 12px 30px;
   margin: 8px 0;
   display: block;
   box-sizing: border-box;
-  background-color: #D9D9D9;
+  background-color: #d9d9d9;
   border: none;
   border-radius: 10px;
   height: 60px;
@@ -213,5 +232,4 @@ export default {
 .right a:hover {
   color: grey;
 }
-
 </style>

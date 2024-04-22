@@ -1,4 +1,6 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: '../.env' }); // Load environment variables from .env file
+
+// Import required modules
 const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
 const bcrypt = require('bcryptjs');
@@ -7,6 +9,8 @@ const sanitizeHtml = require('sanitize-html');
 const OpenAI = require('openai');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+
+// Authentication middleware to verify JWT token in request headers
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Assuming token is sent as "Bearer <token>"
   if (!token) {
@@ -22,19 +26,21 @@ const authenticate = (req, res, next) => {
   }
 };
 
-
+// Initialize express application
 const app = express();
 app.use(express.json());
 app.use(cors());
 
+// MongoDB client setup
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 
+// OpenAI client setup
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Initialize MongoDB connection once
+// Initialize MongoDB connection 
 let db;
 const connectToMongoDB = async () => {
   try {
@@ -50,11 +56,8 @@ const connectToMongoDB = async () => {
 // Call this function when your server starts
 connectToMongoDB();
 
-// Modified routes will use the 'db' variable to access the database
 
-// Note: Make sure to handle authentication and validation as before
-
-//Sign Up Route
+// API endpoint for user registration
 app.post('/api/signup', async (req, res) => {
   try {
     const users = db.collection('users');
@@ -74,7 +77,7 @@ app.post('/api/signup', async (req, res) => {
 });
 
 
-//Signin Route
+// API endpoint for user login
 app.post('/api/login', async (req, res) => {
   try {
     const users = db.collection('users');
@@ -101,7 +104,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-// Create a new document
+// API endpoint to create a new document, uses HTML sanitation to prevent XSS
 app.post('/api/documents', authenticate, async (req, res) => {
   const { title, content } = req.body;
   const userId = req.userId;
@@ -130,7 +133,7 @@ app.post('/api/documents', authenticate, async (req, res) => {
 });
 
 
-// Get all documents
+// API endpoint to retrieve all documents for a user
 app.get('/api/documents', authenticate, async (req, res) => {
   const userId = req.userId;
   try {
@@ -142,11 +145,10 @@ app.get('/api/documents', authenticate, async (req, res) => {
   }
 });
 
-
+// API endpoint to fetch a specific document by ID
 app.get('/api/documents/:id', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
-    // await client.connect();
     const database = client.db('study-sphere');
     const documents = database.collection('documents');
     const document = await documents.findOne({ _id: new ObjectId(id), userId: req.userId });
@@ -161,12 +163,11 @@ app.get('/api/documents/:id', authenticate, async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   } finally {
-    // await client.close();
   }
 });
 
 
-// Update a document
+// API endpoint to update a document
 app.put('/api/documents/:id', authenticate, async (req, res) => {
   const { title, content } = req.body;
   const userId = req.userId;
@@ -204,7 +205,7 @@ app.put('/api/documents/:id', authenticate, async (req, res) => {
   }
 });
 
-// Delete a document
+// API endpoint to delete a document
 app.delete('/api/documents/:id', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
@@ -222,26 +223,32 @@ app.delete('/api/documents/:id', authenticate, async (req, res) => {
   }
 });
 
-//Send Chatbot message
+// Chatbot API endpoint for sending messages
 app.post('/api/chat', async (req, res) => {
+  const userMessage = req.body.message;
   try {
-    const userMessage = req.body.message;
-    // Make sure to update this with the correct method to create chat completions according to OpenAI SDK version you are using
     const response = await openai.chat.completions.create({
-      model: "text-embedding-3-small",
+      model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: userMessage }],
     });
-    res.json({ message: response.data.choices[0].text.trim() });
+
+    if (response && response.choices && response.choices.length > 0) {
+      const botMessage = response.choices[0].message.content;
+      if (typeof botMessage === 'string') {
+        res.json({ message: botMessage.trim() });
+      } else {
+        throw new Error("Received non-string response from AI");
+      }
+    } else {
+      throw new Error("No response from AI");
+    }
   } catch (error) {
     console.error('Error processing chat message with OpenAI:', error);
-    if (error.response && error.response.status === 429) {
-      res.status(429).send('Too many requests, please try again later.');
-    } else {
-      res.status(500).send('Error processing your message.');
-    }
+    res.status(500).send('Error processing your message: ' + error.message);
   }
 });
 
+// Setup Nodemailer transport using Mailtrap
 var transporter = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
   port: 2525,
@@ -250,7 +257,7 @@ var transporter = nodemailer.createTransport({
       pass: process.env.MAILTRAP_PASS   // Use environment variable
   }
 });
-
+// Contact form endpoint to send an email
 app.post('/api/contact', async (req, res) => {
   const { name, email, subject, message } = req.body;
   try {
@@ -270,7 +277,7 @@ app.post('/api/contact', async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
   }
 });
-// Password Update Route
+// API endpoint to change user's password
 app.post('/api/change-password', authenticate, async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   const userId = req.userId;
@@ -296,13 +303,11 @@ app.post('/api/change-password', authenticate, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-// Delete User Account Route
+// API endpoint to delete a user account
 app.delete('/api/delete-account', authenticate, async (req, res) => {
   const userId = req.userId;
   try {
-    // Connect to the users collection
     const users = db.collection('users');
-    // Connect to the documents collection
     const documents = db.collection('documents');
 
     // Start by deleting the user's documents
@@ -324,6 +329,7 @@ app.delete('/api/delete-account', authenticate, async (req, res) => {
 
 
 
+// API endpoint to retrieve user details
 
 app.get('/api/user', authenticate, async (req, res) => {
   const userId = req.userId;
@@ -349,6 +355,7 @@ app.get('/api/user', authenticate, async (req, res) => {
 
 
 
+// Start the server
 
 
   const PORT = process.env.PORT || 3000;

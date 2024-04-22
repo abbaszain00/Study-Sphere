@@ -1,35 +1,37 @@
-
-// src/utils/util.js
-
 /**
  * Check if the JWT token is still valid.
- * * @param {number} minutes - The number of minutes before expiration to check for.
-
  * @returns {boolean} True if the token is valid, false otherwise.
  */
 export function isTokenValid() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');  // Retrieve the token from local storage
     if (!token) {
-      return false;
+      return false; // If there's no token return false
     }
   
     try {
-      // Decode the token (Base64) and parse the payload
+      // Decode the token: JWTs are split into three parts by '.', where the second part is the payload
       const payloadBase64 = token.split('.')[1];
       const decodedPayload = JSON.parse(window.atob(payloadBase64));
       const exp = decodedPayload.exp;
   
-      // Convert the expiration time from JWT (seconds) to milliseconds and compare
+      // Check if the current time is less than the expiration time (JWT expiration time is in seconds)
       return Date.now() < exp * 1000;
     } catch (error) {
       console.error("Error decoding token:", error);
-      return false;
+      return false; // Return false if there's an error in decoding the token
     }
   }
+
+  /**
+ * Check if the JWT token is expiring soon.
+ * @param {number} minutes - The number of minutes before expiration to start considering the token as expiring soon.
+ *
+ * @returns {boolean} True if the token is expiring within the specified number of minutes, false otherwise.
+ */
   export function isTokenExpiringSoon(minutes = 5) {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
     if (!token) {
-      return false;
+      return false; // Return false immediately if no token is found
     }
   
     try {

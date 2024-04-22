@@ -1,7 +1,9 @@
 <template>
+  <!--Top bar component-->
   <nav class="top"><Top /></nav>
-
+  <!-- Edit document section -->
   <div class="edit-document">
+    <!-- Document title input field -->
     <div class="title">
       <label for="documentTitle"> </label>
       <input
@@ -11,8 +13,8 @@
         placeholder="Document Title"
       />
     </div>
+    <!-- Quill editor integration for document content editing -->
     <div class="form-group">
-      <!-- <label>Content</label> -->
       <quill-editor
         v-model:content="modelname"
         contentType="html"
@@ -23,18 +25,20 @@
 </template>
 
 <script>
-import { QuillEditor } from "@vueup/vue-quill";
-import axios from "axios";
-import Top from "@/components/Top.vue";
-import { isTokenExpiringSoon } from "@/utils/util.js";
-import { isTokenValid } from "@/utils/util.js";
+import { QuillEditor } from "@vueup/vue-quill"; // Importing QuillEditor
+import axios from "axios"; //Import axios for HTTP requests
+import Top from "@/components/Top.vue"; //Importing Top component
+import { isTokenExpiringSoon } from "@/utils/util.js"; //Import utility functions for token validation
+import { isTokenValid } from "@/utils/util.js"; //Import utility functions for token validation
 
 export default {
   components: {
+    //Component declarations
     QuillEditor,
     Top,
   },
   data() {
+    //Data properties
     return {
       title: "",
       content: "",
@@ -45,35 +49,35 @@ export default {
   methods: {
     checkTokenExpiration() {
       if (!isTokenValid()) {
-        // Assuming you have a method to check token validity
+        // Check if tken is still valid
         clearInterval(this.expirationCheckInterval);
         return; // Exit if the token is no longer valid
       }
-
+      // Check if the token is expiring within 5 minutes
       if (isTokenExpiringSoon(5)) {
         alert(
           "Your session is about to expire in 5 minutes. Please save your changes and re-login."
         );
       }
     },
-
+    //Fetch documents from database
     async fetchDocument() {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token"); // Retrieve the auth token from local storage
       try {
         const response = await axios.get(
-          `/api/documents/${this.$route.params.id}`,
+          `/api/documents/${this.$route.params.id}`, //Fetch documents by ID
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        this.title = response.data.title;
+        this.title = response.data.title; // Setting the document's title from the response
         console.log("This is it: ", response.data.content);
-        this.modelname = response.data.content; // Assign content here
+        this.modelname = response.data.content; // Assigning content to the Quill editor
       } catch (error) {
         console.error("Failed to fetch document:", error);
       }
     },
-
+    //Save documents to database
     async saveDocument() {
       const token = localStorage.getItem("token");
       const documentData = {
@@ -90,15 +94,15 @@ export default {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        this.$router.push({ name: "dash" });
+        this.$router.push({ name: "dash" }); // Redirecting to the dashboard view after saving
       } catch (error) {
         console.error("Failed to save document:", error);
       }
     },
   },
   mounted() {
-    this.fetchDocument();
-    this.tokenCheckInterval = setInterval(this.checkTokenExpiration, 60 * 1000);
+    this.fetchDocument(); // Fetch the document when the component is mounted
+    this.tokenCheckInterval = setInterval(this.checkTokenExpiration, 60 * 1000); // Set up an interval to check token expiration every minute
 
     // Perform an initial check in case the token is already close to expiring
     this.checkTokenExpiration();
@@ -111,7 +115,7 @@ export default {
     next();
   },
   beforeDestroy() {
-    // Clear the interval to prevent memory leaks
+    // Clean up by clearing the interval when the component is destroyed
     clearInterval(this.tokenCheckInterval);
   },
 };
@@ -123,29 +127,24 @@ export default {
   display: flex;
 }
 .title input[type="text"] {
-  font-size: 1.5rem; /* Adjust the font size as needed */
-  border: 1px solid #ccc; /* Light grey border for minimal appearance */
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.8
-  ); /* Slightly transparent background */
-  width: 100%; /* Adjust the width as necessary */
-  padding: 8px 12px; /* Padding for better text alignment */
-  border-radius: 5px; /* Slightly rounded corners for a softer look */
-  outline: none; /* Removes the outline to keep the design clean */
-  box-shadow: none; /* Avoids any shadow for a flat design */
-  transition: all 0.3s ease; /* Smooth transition for focus effect */
-  text-align: center; /* Centers text horizontally */
-  display: block; /* Ensures the input behaves as a block-level element */
-  margin: 0 auto; /* Centers the input field within its container */
+  font-size: 1.5rem;
+  border: 1px solid #ccc;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 5px;
+  outline: none;
+  box-shadow: none;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: block;
+  margin: 0 auto;
 }
 
 .title input[type="text"]:focus {
-  border-color: #007bff; /* Highlight color when the input is focused */
-  background-color: white; /* Fully opaque background on focus */
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Subtle glow effect */
+  border-color: #007bff;
+  background-color: white;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 *,
@@ -162,24 +161,24 @@ button:hover {
   background-color: #0056b3;
 }
 nav.top {
-  position: relative; /* Needed to effectively set z-index */
-  z-index: 2; /* Ensure this is higher than the Quill toolbar's z-index */
+  position: relative;
+  z-index: 2;
 }
 
 .form-group .ql-editor {
   width: 8.5in;
   min-height: 11in;
   padding: 1in;
-  margin: 1rem auto; /* Center in the page */
+  margin: 1rem auto;
   box-shadow: 0 0 5px 0 black;
   background-color: white;
 }
 
 .form-group .ql-container.ql-snow {
   border: none;
-  display: block; /* Adjusted to block for better control */
-  max-width: 8.5in; /* Match the width of ql-editor */
-  margin: auto; /* Centering it */
+  display: block;
+  max-width: 8.5in;
+  margin: auto;
 }
 
 .form-group .ql-toolbar.ql-snow {
@@ -196,20 +195,20 @@ nav.top {
 @media print {
   body {
     background-color: transparent;
-    overflow-y: visible; /* Ensure overflow content is visible */
+    overflow-y: visible;
   }
   .top,
   .nav {
-    display: none; /* Hide navigation and other non-relevant elements */
+    display: none;
   }
   .form-group .ql-toolbar.ql-snow {
-    display: none; /* Hide the editor toolbar during printing */
+    display: none;
   }
   .form-group .ql-editor {
-    width: 100%; /* Adjust width to avoid overflow */
-    height: auto; /* Let height adjust based on content */
-    padding: 0; /* Remove padding during print to save space and prevent blank pages */
-    box-shadow: none; /* Remove box shadow during print */
+    width: 100%;
+    height: auto;
+    padding: 0;
+    box-shadow: none;
   }
 }
 </style>

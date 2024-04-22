@@ -1,5 +1,6 @@
 <template>
   <div v-if="isChatBotVisible" class="chatbot-container">
+    <!--Draggable header-->
     <div
       class="chat-header"
       @mousedown="dragStart"
@@ -7,10 +8,12 @@
       @mouseup="dragEnd"
     >
       AI Chatbot
+      <!--Minimise button-->
       <button class="minimize-button" @click="toggleChatBotVisibility">
         -
       </button>
     </div>
+    <!-- Container for chat messages -->
     <div class="chat-messages">
       <div
         v-for="(message, index) in chatMessages"
@@ -21,6 +24,7 @@
         {{ message.text }}
       </div>
     </div>
+    <!-- Input field for user to type messages -->
     <input
       type="text"
       v-model="userInput"
@@ -31,8 +35,8 @@
 </template>
 
 <script>
-import axios from "axios";
-import { mapActions, mapState, mapMutations } from "vuex";
+import axios from "axios"; //Import AXIOS for HTTP requests
+import { mapActions, mapState, mapMutations } from "vuex"; //Import actions, state and mutations from vuex store
 
 export default {
   data() {
@@ -44,24 +48,28 @@ export default {
     };
   },
   computed: {
-    ...mapState(["chatMessages", "isChatBotVisible"]),
+    ...mapState(["chatMessages", "isChatBotVisible"]), // Map Vuex state to local computed properties for ease of access
   },
   methods: {
-    ...mapMutations(["toggleChatBotVisibility"]),
+    ...mapMutations(["toggleChatBotVisibility"]), // Map Vuex mutations to local methods
 
-    ...mapActions(["addChatMessage"]),
+    ...mapActions(["addChatMessage"]), // Map Vuex actions to local methods
+    // Method to send a message and handle responses
     async sendMessage() {
+      // Check if the input is not just empty spaces
       if (this.userInput.trim()) {
         const userMessage = { type: "user", text: this.userInput };
-        this.addChatMessage(userMessage);
+        this.addChatMessage(userMessage); // Add user message to chat
 
         try {
           const response = await axios.post("/api/chat", {
             message: this.userInput,
           });
+          // Add bot's response to the chat
           this.addChatMessage({ type: "bot", text: response.data.message });
         } catch (error) {
           console.error("Error sending message:", error);
+          // Add error message to the chat if the request fails
           this.addChatMessage({
             type: "bot",
             text: "Sorry, I can't respond at the moment.",
@@ -73,7 +81,7 @@ export default {
     },
     dragStart(event) {
       this.isDragging = true;
-      const chatbox = this.$el; // This should reference the chatbot container now
+      const chatbox = this.$el;
       this.dragStartX = event.clientX - chatbox.offsetLeft;
       this.dragStartY = event.clientY - chatbox.offsetTop;
     },

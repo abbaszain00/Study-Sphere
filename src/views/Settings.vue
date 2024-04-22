@@ -2,11 +2,13 @@
   <div class="settings-container">
     <div class="Header">
       <Top />
+      <!--Top navbar component-->
     </div>
     <div class="settings-content">
       <h1>Settings</h1>
       <div class="settings-section">
         <div>
+          <!--Section for displaying account info-->
           <h2>Account Details</h2>
           <label>Email:</label>
           <input type="text" v-model="user.email" disabled />
@@ -15,6 +17,7 @@
           <label>Last Name:</label>
           <input type="text" v-model="user.lastName" disabled />
         </div>
+        <!--Form for changing password-->
         <form @submit.prevent="changePassword">
           <div>
             <label>Current Password:</label>
@@ -32,15 +35,18 @@
               required
             />
           </div>
+          <!--Submit button for changing password-->
           <button
             type="submit"
             :disabled="passwords.newPassword !== passwords.confirmNewPassword"
           >
             Change Password
           </button>
+          <!--Button for deleting account-->
           <button type="button" @click="deleteAccount" class="delete-button">
             Delete Account
           </button>
+          <!-- Message if passwords do not match -->
           <p v-if="passwords.newPassword !== passwords.confirmNewPassword">
             Passwords do not match.
           </p>
@@ -51,8 +57,8 @@
 </template>
 
 <script>
-import Top from "@/components/Top.vue";
-import axios from "axios";
+import Top from "@/components/Top.vue"; //Import Top component
+import axios from "axios"; //Import axios for HTTP requests
 
 export default {
   name: "Settings",
@@ -75,6 +81,7 @@ export default {
   },
 
   methods: {
+    //Method for account deletion
     deleteAccount() {
       if (
         confirm(
@@ -98,6 +105,7 @@ export default {
           });
       }
     },
+    // Method to fetch user data from the server.
     fetchUserData() {
       axios
         .get("/api/user", {
@@ -105,6 +113,7 @@ export default {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         })
+        // Assign the fetched user data to the user object.
         .then((response) => {
           this.user.email = response.data.email;
           this.user.firstName = response.data.firstName;
@@ -115,6 +124,7 @@ export default {
           alert("Failed to load user details.");
         });
     },
+    // method to handle password change.
     async changePassword() {
       if (
         !this.passwords.oldPassword ||
@@ -124,11 +134,12 @@ export default {
         alert("Please fill in all fields.");
         return;
       }
+      // Check if the new passwords match.
       if (this.passwords.newPassword !== this.passwords.confirmNewPassword) {
         alert("The new passwords do not match.");
         return;
       }
-
+      // Make a POST request to change the password.
       try {
         const response = await axios.post(
           "/api/change-password",
@@ -143,7 +154,8 @@ export default {
           }
         );
 
-        alert(response.data.message);
+        alert(response.data.message); // Notify user of successful password change.
+        // Reset password fields.
         this.passwords.oldPassword = "";
         this.passwords.newPassword = "";
         this.passwords.confirmNewPassword = "";
@@ -157,7 +169,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchUserData();
+    this.fetchUserData(); // Fetch user data when the component mounts.
   },
 };
 </script>
@@ -167,7 +179,7 @@ export default {
   width: 100%;
   height: 100vh;
   font-family: "Inter", sans-serif;
-  background-color: #f4f4f4;
+  background: linear-gradient(white, #d3d0d0, #a1a1a1);
   font-family: "Inter";
 }
 .settings-content {
@@ -221,6 +233,6 @@ export default {
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
-  margin-left: 10px; /* Space from the change password button */
+  margin-left: 10px;
 }
 </style>

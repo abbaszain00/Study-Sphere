@@ -1,21 +1,28 @@
 <template>
   <div class="Header">
+    <!--Top navbar component-->
     <Top />
   </div>
   <div class="dash-container">
+    <!--Modal component for creating documents-->
     <DocumentNameModal
       v-if="isCreatingDocument"
       @save="handleSave"
       @close="handleClose"
     />
+    <!--Main section of dashoard containing documents and actions-->
     <div class="file-section">
       <div class="actions">
+        <!--Button for creating documents-->
         <button @click="createNewDocument">Create</button>
+        <!--Button for editing documents-->
         <button @click="toggleEditMode">Edit</button>
+        <!--Button for deleting documents-->
         <button v-if="isEditing" @click="deleteSelectedDocuments">
           Delete Selected
         </button>
         <div class="search-container">
+          <!--Search bar-->
           <input
             type="text"
             v-model="searchQuery"
@@ -23,7 +30,7 @@
             class="search-input"
           />
         </div>
-        <!-- Add this inside your .actions div -->
+        <!--Sorting documents-->
         <div class="dropdown">
           <button class="dropbtn">Sort By</button>
           <div class="dropdown-content">
@@ -40,6 +47,7 @@
       <table class="documents-table">
         <thead>
           <tr>
+            <!--Conditional select column for deleting documents-->
             <th v-if="isEditing">Select</th>
             <th>Name</th>
             <th>Created At</th>
@@ -47,11 +55,13 @@
           </tr>
         </thead>
         <tbody>
+          <!-- Dynamic list of documents, filterable by searchQuery -->
           <tr
             v-for="document in filteredDocuments"
             :key="document._id"
             @click="isEditing ? null : openDocument(document._id)"
           >
+            <!-- Checkbox for selecting documents in edit mode -->
             <td v-if="isEditing">
               <input
                 type="checkbox"
@@ -60,6 +70,7 @@
                 @click.stop
               />
             </td>
+            <!-- Document details -->
             <td>{{ document.title }}</td>
             <td>{{ formatDate(document.createdAt) }}</td>
             <td>{{ formatDate(document.updatedAt) }}</td>
@@ -71,26 +82,28 @@
 </template>
 
 <script>
-import DocumentNameModal from "@/components/DocumentNameModal.vue";
-import Top from "@/components/Top.vue";
-import { mapActions, mapState } from "vuex";
-import { isTokenValid } from "@/utils/util";
+import DocumentNameModal from "@/components/DocumentNameModal.vue"; //import document modal component
+import Top from "@/components/Top.vue"; //import top navbar componenet
+import { mapActions, mapState } from "vuex"; // Vuex helpers for mapping store state and actions to local component method
+import { isTokenValid } from "@/utils/util"; // Utility function to check token validity
 
 export default {
   components: {
+    //Component declarations
     Top,
     DocumentNameModal,
   },
   data() {
     return {
-      isCreatingDocument: false,
-      selectedDocuments: [],
-      isEditing: false,
-      searchQuery: "",
+      isCreatingDocument: false, //Flag to show/hide document creation modal componenet
+      selectedDocuments: [], //Array to track selected documents for delete function
+      isEditing: false, //Flag to toggle edit mode
+      searchQuery: "", //Search query to filter documents
     };
   },
   computed: {
-    ...mapState(["documents"]),
+    ...mapState(["documents"]), // Maps the 'documents' state from Vuex store to a local computed property
+    // Computed property to return filtered documents based on search query
     filteredDocuments() {
       return this.searchQuery
         ? this.documents.filter((doc) =>
@@ -100,6 +113,7 @@ export default {
     },
   },
   methods: {
+    // Method to sort documents based on selected criteria
     sortDocuments(method) {
       if (method === "alphabetical") {
         this.documents.sort((a, b) => a.title.localeCompare(b.title));
@@ -108,13 +122,13 @@ export default {
           (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
         );
       }
-      // Since Vue cannot detect array modifications through sort(), you might need to trigger reactivity:
-      this.documents = [...this.documents];
+      this.documents = [...this.documents]; // Triggering reactivity after sorting
     },
-    ...mapActions(["fetchDocuments", "deleteDocumentById", "createDocument"]),
+    ...mapActions(["fetchDocuments", "deleteDocumentById", "createDocument"]), // Mapping Vuex actions to component methods
     redirectToSignIn() {
-      window.location.href = "/signin";
+      window.location.href = "/signin"; // Method to redirect user to Sign In view
     },
+    // Method to check token validity and redirect if invalid
     async checkAndRedirect() {
       if (!isTokenValid()) {
         this.redirectToSignIn();
@@ -122,30 +136,35 @@ export default {
       }
       return true;
     },
+    // Method to create a new document after ensuring user is authenticated
     async createNewDocument() {
       if (!(await this.checkAndRedirect())) return;
       this.isCreatingDocument = true;
     },
+    // Method to handle closing the document creation modal
     handleClose() {
       this.isCreatingDocument = false;
     },
+    // Method to handle saving a new or edited document
     async handleSave(documentName) {
       if (!(await this.checkAndRedirect())) return;
       const documentData = { title: documentName, content: "" };
       this.createDocument(documentData)
         .then(() => {
           this.isCreatingDocument = false;
-          this.fetchDocuments();
+          this.fetchDocuments(); // Fetch documents to update the list
         })
         .catch((error) => {
           console.error("Failed to create document:", error);
           alert("There was a problem creating your document.");
         });
     },
+    // Method to open an existing document for editing
     async openDocument(documentId) {
       if (!(await this.checkAndRedirect())) return;
       this.$router.push({ name: "EditDocument", params: { id: documentId } });
     },
+    // Method to delete selected documents
     async deleteSelectedDocuments() {
       if (!(await this.checkAndRedirect())) return;
       if (
@@ -166,10 +185,12 @@ export default {
           alert("Failed to delete some documents.");
         });
     },
+    // Method to toggle the edit mode for document manipulation
     async toggleEditMode() {
       if (!(await this.checkAndRedirect())) return;
       this.isEditing = !this.isEditing;
     },
+    // Method to format the date string
     formatDate(value) {
       return new Date(value).toLocaleDateString("en-US", {
         year: "numeric",
@@ -181,7 +202,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchDocuments();
+    this.fetchDocuments(); // Fetch documents on component mount
   },
 };
 </script>
@@ -192,7 +213,7 @@ body {
   font-family: "Inter";
 }
 .dash-container {
-  background-color: white;
+  background: linear-gradient(white, #d3d0d0, #a1a1a1);
   height: 100vh;
   font-family: "Inter";
 }
@@ -214,8 +235,8 @@ body {
   border-radius: 5px;
   transition: 0.3s;
   font-weight: bold;
-  width: 100px !important; /* Adjust as needed */
-  height: 40px !important; /* Adjust as needed */
+  width: 100px !important;
+  height: 40px !important;
   margin-top: 20px;
 }
 
@@ -259,16 +280,16 @@ body {
 }
 
 .search-container .search-input {
-  padding: 10px; /* Adjust padding as necessary */
+  padding: 10px;
   margin: 20px 0;
-  width: 500px; /* Use 100% to fill the container, or set a fixed width */
+  width: 500px;
   border: 1px solid #000000;
   border-radius: 4px;
   background-color: #ffffff;
   font-family: "Inter";
-  font-size: 16px; /* Ensuring font size is explicitly set */
-  height: var(--input-height); /* Use CSS variable */
-  box-sizing: border-box; /* Ensures padding doesn't affect the final size */
+  font-size: 16px;
+  height: var(--input-height);
+  box-sizing: border-box;
 }
 
 .actions {
@@ -279,7 +300,7 @@ body {
   margin-left: auto;
   padding-right: 20px;
 }
-/* Dropdown Button */
+
 .dropbtn {
   font-family: "Inter";
   margin: 10px;

@@ -1,3 +1,4 @@
+// Import necessary vue-router methods and route views
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import SignUp from '../views/SignUp.vue';
@@ -9,14 +10,16 @@ import VideoView from '@/views/VideoView.vue';
 import { isTokenValid } from '@/utils/util'
 import Settings from '@/views/Settings.vue';
 
-// Define routes, marking public ones with a meta field
+// Define all routes for the application, each route maps to a Vue component/view
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: HomeView,
-    meta: { public: true },
+    path: '/', // The URL path for the route
+    name: 'Home', // A unique name for the route
+    component: HomeView, // The component to render when this route is active
+    meta: { public: true }, // Custom metadata indicating that the route is public
   },
+  // Additional routes follow a similar pattern
+  // Public routes allow access without authentication
   {
     path: '/signup',
     name: 'SignUp',
@@ -41,18 +44,16 @@ const routes = [
     component: SignIn,
     meta: { public: true },
   },
+  // Protected routes require authentication
   {
     path: '/dashboard',
     name: 'dash',
     component: Dashboard,
-    meta: { public: false }, // This route is protected
+    meta: { public: false }, 
   },
-  {
-    path: '/create',
-    name: 'CreateDocument',
-    component: () => import('@/views/CreateDocument.vue'), // Lazy load the CreateDocument view
-    meta: { public: false }, // This route is protected
-  },
+  
+  // Dynamically loaded component for better performance
+
   {
     path: '/edit/:id',
     name: 'EditDocument',
@@ -72,7 +73,7 @@ const routes = [
     meta: { public: false },
   },
 ];
-
+// Create the router instance and pass the 'routes' array
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_BASE_URL),
   routes,
@@ -80,11 +81,11 @@ const router = createRouter({
 
 // Add a global beforeEach guard to check for route access
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = isTokenValid(); // Use the isTokenValid function here
-  const isPublicRoute = to.matched.some(record => record.meta.public);
+  const isAuthenticated = isTokenValid(); // Check if user is authenticated
+  const isPublicRoute = to.matched.some(record => record.meta.public); // Determine if the route is public
 
   if (!isPublicRoute && !isAuthenticated) {
-    // If trying to access a protected route and the token is invalid or expired, redirect to signin
+    // Redirect to signin if the route is protected and user is not authenticated
     next({
       path: '/signin',
       query: { sessionExpired: 'true' }

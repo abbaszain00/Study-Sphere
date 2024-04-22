@@ -8,33 +8,41 @@
     <div class="sidebar" :class="{ 'sidebar-open': isSidebarOpen }" @click.stop>
       <!-- Sidebar icons -->
       <nav class="sidebar-icons">
+        <!-- Button to close the sidebar -->
         <button @click="closeSidebar">
           <font-awesome-icon icon="arrow-left" size="2x" />
         </button>
+        <!-- Toggle button for To-Do list visibility -->
         <button @click="toggleToDoListVisibility">
           <font-awesome-icon icon="list" size="2x" />
           <p>To-Do</p>
         </button>
+        <!-- Toggle button for Pomodoro timer visibility -->
         <button @click="togglePomodoroTimerVisibility">
           <font-awesome-icon icon="clock" size="2x" />
           <p>Pomodoro</p>
         </button>
+        <!-- Toggle button for Sound menu visibility -->
         <button @click="toggleSoundMenuVisibility">
           <font-awesome-icon icon="music" size="2x" />
           <p>Sounds</p>
         </button>
+        <!-- Navigation to videos page -->
         <button @click="goToVideosPage">
           <font-awesome-icon icon="image" size="2x" />
           <p>Videos</p>
         </button>
+        <!-- Toggle button for Chat-Bot visibility -->
         <button @click="toggleChatBotVisibility">
           <font-awesome-icon icon="comment" size="2x" />
           <p>Chat-Bot</p>
         </button>
+        <!-- Navigation to settings page -->
         <button @click="goToSettingsPage">
           <font-awesome-icon icon="gear" size="2x" />
           <p>Settings</p>
         </button>
+        <!-- Button to log out the user -->
         <button @click="logoutUser">
           <font-awesome-icon
             icon="circle-xmark"
@@ -45,41 +53,41 @@
         </button>
       </nav>
     </div>
-
-    <!-- Overlay to detect clicks outside -->
-    <div v-show="isSidebarOpen" @click="closeSidebar"></div>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
-import ToDoList from "./ToDoList.vue";
+import { mapState, mapMutations } from "vuex"; //Import state and mutations from vuex store
 import axios from "axios";
 
 export default {
   computed: {
-    ...mapState(["isSidebarOpen"]),
+    ...mapState(["isSidebarOpen"]), // Maps the sidebar open state from Vuex store
   },
   methods: {
     ...mapMutations([
-      "toggleSidebar",
-      "setSidebar",
-      "toggleToDoListVisibility", // Assuming you have this mutation
-      "togglePomodoroTimerVisibility",
-      "toggleChatBotVisibility",
-      "toggleSoundMenuVisibility",
+      "toggleSidebar", // Toggles the sidebar open state
+      "setSidebar", // Sets the sidebar state explicitly
+      "toggleToDoListVisibility", // Toggles visibility of To-Do list
+      "togglePomodoroTimerVisibility", // Toggles visibility of Pomodoro timer
+      "toggleChatBotVisibility", // Toggles visibility of Chat bot
+      "toggleSoundMenuVisibility", // Toggles visibility of Sound menu
     ]),
+    // Closes the sidebar
     closeSidebar() {
       this.setSidebar(false);
     },
+    //Logout the user
     logoutUser() {
-      localStorage.removeItem("token");
-      axios.defaults.headers.common["Authorization"] = "";
-      this.$router.push("/Signin");
+      localStorage.removeItem("token"); // Removes the token from local storage
+      axios.defaults.headers.common["Authorization"] = ""; // Resets the authorization header
+      this.$router.push("/Signin"); // Redirects to the Sign-in page
     },
+    // Navigates to the Videos page
     goToVideosPage() {
       this.$router.push("/Videos");
     },
+    // Navigates to the Settings page
     goToSettingsPage() {
       this.$router.push("/Settings");
     },
@@ -88,28 +96,26 @@ export default {
 </script>
 
 <style>
-/* Basic styling */
-/* Updated styling */
 .sidebar {
-  width: 80px; /* Adjust based on your desired sidebar width */
+  width: 80px;
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
   background-color: white;
   transition: transform 0.3s ease;
-  transform: translateX(-100%); /* Initially hide sidebar */
+  transform: translateX(-100%);
 }
 
 .sidebar-open {
-  transform: translateX(0%); /* Show sidebar */
+  transform: translateX(0%);
 }
 
 .icon-button {
-  background: none; /* Remove default background */
-  border: none; /* Remove default border */
-  padding: 0; /* Remove default padding */
-  cursor: pointer; /* Keep the pointer cursor to indicate it's clickable */
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   height: 50px;
   width: 50px;
 }

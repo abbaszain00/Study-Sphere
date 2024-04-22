@@ -1,5 +1,6 @@
 <template>
   <div v-if="isPomodoroTimerVisible" class="pomodoro-container">
+    <!-- Pomodoro timer draggable header with minimise functionality -->
     <div
       class="pomodoro-header"
       @mousedown="dragStart"
@@ -7,19 +8,23 @@
       @mouseup="dragEnd"
     >
       Pomodoro Timer
+      <!--Minimise button-->
       <button class="minimize-button" @click="togglePomodoroTimerVisibility">
         -
       </button>
     </div>
+    <!--Buttons for selecting timer mode-->
     <div class="tabs">
       <button @click="selectMode('work')">Timer</button>
       <button @click="selectMode('shortBreak')">Short Break</button>
       <button @click="selectMode('longBreak')">Long Break</button>
     </div>
+    <!-- Timer display -->
     <div class="timer-display" :class="{ 'timer-finished': timerFinished }">
       <h2>{{ currentModeFormatted }}</h2>
       <div>{{ displayTime }}</div>
     </div>
+    <!-- Controls for starting, stopping, and resetting the timer -->
     <div class="timer-controls">
       <button @click="startTimer">Start</button>
       <button @click="stopTimer">Stop</button>
@@ -29,23 +34,26 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex"; //Importing actions, state and mutations from vuex store
 
 export default {
   computed: {
+    // Maps states for component from Vuex store
     ...mapState({
       isPomodoroTimerVisible: (state) => state.isPomodoroTimerVisible,
       secondsLeft: (state) => state.timerSecondsLeft,
       currentMode: (state) => state.currentMode,
     }),
     timerFinished() {
-      return this.$store.state.timerFinished;
+      return this.$store.state.timerFinished; // Computed property to check if the timer has finished
     },
+    // Formats the time left into minutes and seconds
     displayTime() {
       const minutes = Math.floor(this.secondsLeft / 60);
       const seconds = this.secondsLeft % 60;
       return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
     },
+    // Returns a formatted string based on the current mode
     currentModeFormatted() {
       switch (this.currentMode) {
         case "work":
@@ -57,6 +65,7 @@ export default {
       }
     },
   },
+  // Watch for timer finished changes to show notifications
   watch: {
     timerFinished(newVal) {
       if (newVal) {
@@ -79,11 +88,11 @@ export default {
     ...mapActions([
       "startTimer",
       "stopTimer",
-      "selectMode", // Use selectMode action to also reset timer automatically when changing modes
-      "resetTimer", // Ensure this is correctly dispatched to reset the timer
+      "selectMode", // Use selectMode to reset timer automatically when changing modes
+      "resetTimer", // Resets the timer
     ]),
     resetTimer() {
-      this.$store.dispatch("resetTimer"); // Assuming this action resets the timer to the mode's start duration
+      this.$store.dispatch("resetTimer"); //  Dispatches resetTimer action
     },
     selectMode(mode) {
       this.$store.dispatch("selectMode", mode); // Dispatch the selectMode action
@@ -155,7 +164,6 @@ export default {
 .timer-controls button {
   margin: 5px;
   font-family: "Inter";
-  /* border: none; */
   border-radius: 10px;
   background-color: grey;
   padding: 5px;
@@ -177,7 +185,7 @@ export default {
   top: 0px;
 }
 .timer-finished {
-  animation: flashRed 1s infinite; /* Adjust the duration and iteration count as desired */
+  animation: flashRed 1s infinite;
 }
 @keyframes flashRed {
   0%,
